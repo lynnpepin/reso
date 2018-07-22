@@ -194,15 +194,15 @@ class ResoBoardInitTest(ut.TestCase):
         im = np.swapaxes(Image.open("testing/test_04.png"),0,1)[:,:,:3]
         RB = ResoBoard("testing/test_04.png")
         
-        #self.assertTrue(np.array_equal(im, RB.get_image()))
+        self.assertTrue(np.array_equal(im, RB.get_image()))
         RB.iterate()
-        Image.fromarray(np.swapaxes(RB.get_image(),0,1),'RGB').save("testing/debug_04_02.png")
-        #self.assertTrue(np.array_equal(im, RB.get_image()))
+        #Image.fromarray(np.swapaxes(RB.get_image(),0,1),'RGB').save("testing/debug_04_02.png")
+        self.assertTrue(np.array_equal(im, RB.get_image()))
         RB.iterate()
-        Image.fromarray(np.swapaxes(RB.get_image(),0,1),'RGB').save("testing/debug_04_03.png")
-        #self.assertTrue(np.array_equal(im, RB.get_image()))
-        Image.fromarray(np.swapaxes(RB.get_image(),0,1),'RGB').save("testing/debug_04_04.png")
+        #Image.fromarray(np.swapaxes(RB.get_image(),0,1),'RGB').save("testing/debug_04_03.png")
+        self.assertTrue(np.array_equal(im, RB.get_image()))
         RB.iterate()
+        #Image.fromarray(np.swapaxes(RB.get_image(),0,1),'RGB').save("testing/debug_04_04.png")
 
     def test_iterate_4(self):
         fn1 = "testing/test_03_01.png"
