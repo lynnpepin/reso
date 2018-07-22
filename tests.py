@@ -109,9 +109,46 @@ class ResoBoardInitTest(ut.TestCase):
         RB._red_wires[0].state = not starting_state
         
         self.assertEqual(RB._red_wires[0].state, RB._resel_objects[regionid].state)
+
+    def test_sanity_01(self):
+        # Make sure a number of the new functions run:
+        RB = ResoBoard("testing/test_02.png")
+        RB._update()
         
+    def test_iterate(self):
+        fn1 = "testing/test_03_01.png"
+        fn2 = "testing/test_03_02.png"
+        fn3 = "testing/test_03_03.png"
+        fn4 = "testing/test_03_04.png"
         
-    
+        # Images
+        im1 = np.swapaxes(Image.open(fn1),0,1)
+        im2 = np.swapaxes(Image.open(fn2),0,1)
+        im3 = np.swapaxes(Image.open(fn3),0,1)
+        im4 = np.swapaxes(Image.open(fn4),0,1)
+        
+        RB = ResoBoard(fn1)
+        '''
+        print(im1 == RB.get_image())
+        print("########")
+        print("########")
+        print(im1)
+        print("########")
+        print(RB.get_image())
+        print("########")
+        print("########")
+        '''
+        self.assertTrue(np.array_equal(im1, RB.get_image()))
+        RB.iterate()
+        print(im1 == RB.get_image())
+        Image.fromarray(np.swapaxes(RB.get_image(),0,1), 'RGB').show()
+        self.assertTrue(np.array_equal(im2, RB.get_image()))
+        RB.iterate()
+        self.assertTrue(np.array_equal(im3, RB.get_image()))
+        RB.iterate()
+        self.assertTrue(np.array_equal(im4, RB.get_image()))
+        
+
 all_tests = [DefaultPaletteTests,
              ResoBoardInitTest]
 

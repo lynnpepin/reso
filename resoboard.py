@@ -55,12 +55,16 @@ class Wire:
         self.regionid = regionid
         self.state = state
         self.next_state = next_state
+        # State corresponds to the visual state of the wire between iterations
+        # next_state is used only during iteration and remains false
 
 class Node:
     # Node is everything that is not a wire
     def __init__(self, regionid, state = False):
         self.regionid = regionid
-        self.state = state
+        self.state = state # Remains false between iterations
+        # For 'and' nodes, state starts at False,
+        # locks to -1 if connected to an off wire.
 
 
 class ResoBoard:
@@ -91,6 +95,9 @@ class ResoBoard:
             # self._adj_ands[]    by input id
             # self._adj_outputs[] by input_id, xor_id, or and_id
             # self._adj_wires[]   by output_id
+        # Leftover arguments:
+        # self._resel_to_rgb
+        # self._rgb_to_resel
         
 
         #### Loading the image and converting it to self._resel_map
@@ -207,4 +214,77 @@ class ResoBoard:
                     if adj_reg_class in classids:
                         to_dict[resel.regionid].append(self._resel_objects[adj_reg_id])
         
+        #### Set up the self._rgb_to_resel, self._resel_to_rgb for later use:
+        self._rgb_to_resel = rgb_to_resel
+        self._resel_to_rgb = resel_to_rgb
+    
+    
+    def _update(self, resel_map = True, image = True):
+        # Update the resel map and the image
+        if resel_map or image: # Only loop if we want to update something!
+            for oncolor, offcolor, wires in ((pR, pr, self._red_wires), (pB, pb, self._blue_wires)):
+                for wire in wires:
+                    color = oncolor if wire.state else offcolor # Color to set the wire to
+                    color_tuple = np.array(self._resel_to_rgb[color])
+                    regionid = wire.regionid
+                    pixel_list = self._RM.regions(regionid)[1]
+                    for ii, jj in pixel_list:
+                        if resel_map:
+                            self._resel_map[ii,jj] = color
+                        if image:
+                            self._image[ii,jj] = color_tuple
+                
+    
+    def get_resel_map(self):
+        return self._resel_map
+    
+    def get_image(self):
+        return self._image
+    
+    def iterate(self, update_resels = True, update_image = True):
+        # Iterate the board, updating the Wires() objects.
         
+        # Wire --> input nodes
+        for wire in self._red_wires + self._blue_wires:
+            for inputnode in self._adj_inputs[wire.regionid]:
+                # inputnode.active = wire.active # Don't need this?
+                # input node --> logic nodes
+                for xornode in self._adj_xors[inputnode.regionid]:
+                    xornode.state = xornode.state ^ wire.state
+                for andnode in self._adj_ands[inputnode.regionid]:
+                    if not andnode.state == -1: # if andnode has not been locked yet,
+                        # Lock it to -1 if wire is off, else set it to 1
+                        andnode.state = 1 if wire.state else -1
+                for outnode in self._adj_outputs[inputnode.regionid]:
+                    outnode.state = outnode.state or inputnode.state
+                
+        # Now that the wires have passed their contents through the input
+        #   nodes and the logic nodes, let's give our logic nodes the
+        #   chance to update the output nodes
+        for logicnodes in (self._xors, self._ands):
+            for logicnode in logicnodes:
+                for outputnode in self._adj_outputs[logicnode.regionid]:
+                    outputnode.state = outputnode.state or logicnode.state
+        
+        # Now that all our output nods are updated, set up the wires
+        for outputnode in self._outputs:
+            for wire in self._adj_wires[outputnode.regionid]:
+                wire.next_state = wire.next_state or outputnode.state
+        
+        # Finally, reset everything
+        for wire in self._red_wires + self._blue_wires:
+            wire.state = wire.next_state
+            wire.next_state = False
+
+        for node in self._xors + self._ands + self._inputs + self._outputs:
+            node.state = False
+        
+        
+        # By default, also updates the resels and the image
+        self._update(update_resels, update_image)
+    
+
+
+
+
+
