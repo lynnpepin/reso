@@ -251,7 +251,8 @@ class ResoBoard:
             for inputnode in self._adj_inputs[wire.regionid]:
                 # Update the internal states of adjacent xor, and, outputs
                 for xornode in self._adj_xors[inputnode.regionid]:
-                    xornode = xornode.state ^ wire.state
+                    xornode.state = xornode.state ^ wire.state
+                    #print("xornode",xornode.regionid,"now",xornode.state)
                 for andnode in self._adj_ands[inputnode.regionid]:
                     if not (andnode.state == -1):
                         if wire.state == False:
@@ -262,18 +263,20 @@ class ResoBoard:
                     outnode.state = outnode.state or wire.state
         
         # For each logical element,
-        for logicnodes in (self._xors, self._ands):
-            for node in logicnodes:
-                # Update the internal state of every connected output
-                print(node.regionid)
-                for outnode in self._adj_outputs[node.regionid]:
-                    outnode.state = outnode.state or node.state
+        for xornode in self._xors:
+            for outnode in self._adj_outputs[xornode.regionid]:
+                outnode.state = outnode.state or xornode.state
+        
+        for andnode in self._ands:
+            if andnode.state == True:
+                for outnode in self._adj_outputs[andnode.regionid]:
+                    outnode.state = outnode.state or andnode.state
         
         # For each output,
         for outnode in self._outputs:
             # Update the next_state of each adjacent wire
             for wire in self._adj_wires[outnode.regionid]:
-                 wire.state = wire.state or outnode.state
+                 wire.next_state = wire.next_state or outnode.state
         
         # Finally, reset everything
         for wire in (self._red_wires + self._blue_wires):
