@@ -104,7 +104,7 @@ class ResoBoard:
         # 'image' can be a string or a numpy aray.
         # If 'image' is str, load it first.
         if isinstance(image, str):
-            image = np.swapaxes(np.array(Image.open(image)), 0, 1)
+            image = np.swapaxes(np.array(Image.open(image)), 0, 1)[:,:,:3]
         # else: assume image is of format (width, height, 3), indexed (x,y)
         self._image = image
         
@@ -221,6 +221,7 @@ class ResoBoard:
     
     def _update(self, resel_map = True, image = True):
         # Update the resel map and the image
+        # Has not been tested!
         if resel_map or image: # Only loop if we want to update something!
             for oncolor, offcolor, wires in ((pR, pr, self._red_wires), (pB, pb, self._blue_wires)):
                 for wire in wires:
@@ -244,41 +245,43 @@ class ResoBoard:
     def iterate(self, update_resels = True, update_image = True):
         # Iterate the board, updating the Wires() objects.
         
-        # Wire --> input nodes
-        for wire in self._red_wires + self._blue_wires:
+        # For each wire,
+        for wire in (self._red_wires + self._blue_wires):
+            # For each input connected to that wire,
             for inputnode in self._adj_inputs[wire.regionid]:
-                # inputnode.active = wire.active # Don't need this?
-                # input node --> logic nodes
+                # Update the internal states of adjacent xor, and, outputs
                 for xornode in self._adj_xors[inputnode.regionid]:
-                    xornode.state = xornode.state ^ wire.state
+                    xornode = xornode.state ^ wire.state
                 for andnode in self._adj_ands[inputnode.regionid]:
-                    if not andnode.state == -1: # if andnode has not been locked yet,
-                        # Lock it to -1 if wire is off, else set it to 1
-                        andnode.state = 1 if wire.state else -1
+                    if not (andnode.state == -1):
+                        if wire.state == False:
+                            andnode.state = -1
+                        else:
+                            andnode.state = True
                 for outnode in self._adj_outputs[inputnode.regionid]:
-                    outnode.state = outnode.state or inputnode.state
-                
-        # Now that the wires have passed their contents through the input
-        #   nodes and the logic nodes, let's give our logic nodes the
-        #   chance to update the output nodes
-        for logicnodes in (self._xors, self._ands):
-            for logicnode in logicnodes:
-                for outputnode in self._adj_outputs[logicnode.regionid]:
-                    outputnode.state = outputnode.state or logicnode.state
+                    outnode.state = outnode.state or wire.state
         
-        # Now that all our output nods are updated, set up the wires
-        for outputnode in self._outputs:
-            for wire in self._adj_wires[outputnode.regionid]:
-                wire.next_state = wire.next_state or outputnode.state
+        # For each logical element,
+        for logicnodes in (self._xors, self._ands):
+            for node in logicnodes:
+                # Update the internal state of every connected output
+                print(node.regionid)
+                for outnode in self._adj_outputs[node.regionid]:
+                    outnode.state = outnode.state or node.state
+        
+        # For each output,
+        for outnode in self._outputs:
+            # Update the next_state of each adjacent wire
+            for wire in self._adj_wires[outnode.regionid]:
+                 wire.state = wire.state or outnode.state
         
         # Finally, reset everything
-        for wire in self._red_wires + self._blue_wires:
+        for wire in (self._red_wires + self._blue_wires):
             wire.state = wire.next_state
             wire.next_state = False
 
         for node in self._xors + self._ands + self._inputs + self._outputs:
             node.state = False
-        
         
         # By default, also updates the resels and the image
         self._update(update_resels, update_image)
