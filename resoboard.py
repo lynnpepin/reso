@@ -288,9 +288,3 @@ class ResoBoard:
         
         # By default, also updates the resels and the image
         self._update(update_resels, update_image)
-    
-
-
-
-
-
