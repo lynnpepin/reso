@@ -52,7 +52,9 @@ There are currently 48 reserved colors (12 hues of 4 shades each). Of these, onl
 | Bright blue (#00f)    | Blue wire (on)        |
 | Dark blue (#008)      | Blue wire (off)       |
 | Bright magenta (#f0f) | Output (node to wire) |
-| 
+| Dark magenta ($808)   | Input (wire to node)  |
+| Bright cyan (#0ff)    | XOR logic node        |
+| Dark cyan (#088)      | AND logic node        |
 
 Despite the 24 reserved colors, this may be expanded. Black and White are considered the only safe 'whitespace' colors. 
 
