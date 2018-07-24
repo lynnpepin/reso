@@ -38,17 +38,18 @@ def main(load_filename,
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Reso!")
-    parser.add_argument("load_location", help="Location to load image from",
+    parser = argparse.ArgumentParser(description="Reso - graphical circuit design cellular automata")
+    parser.add_argument("load_location", help="Location to load image from.",
                         type=str, nargs=1)
     parser.add_argument("--save", "-s", help="Prefix to save images to.",
                         type=str, nargs=1)
     parser.add_argument("--iterate","-i",
-                        help="iterate n times. Default 1.",
+                        help="iterate the reso board n times. Defaults to 1.",
                         type=int, nargs=1)
-    parser.add_argument("--outputlast","-o", help="Only save the final iteration.",
+    parser.add_argument("--outputlast","-o",
+                        help="Only save the final iteration of the board.",
                         action="store_true")
-    parser.add_argument("--verbose","-v", help="Print extra info while working.",
+    parser.add_argument("--verbose","-v", help="Print extra information; useful for debugging.",
                         action="store_true")
 
     args = parser.parse_args()

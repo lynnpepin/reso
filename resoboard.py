@@ -237,9 +237,12 @@ class ResoBoard:
                 
     
     def get_resel_map(self):
+        # Return a Numpy array representing the Reso board
         return self._resel_map
     
     def get_image(self):
+        # Return the Numpy array containing the underlying image.
+        # (Note: You may want to use np.swapaxes(_image, 0, 1))
         return self._image
     
     def iterate(self, update_resels = True, update_image = True):
