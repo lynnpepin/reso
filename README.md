@@ -1,4 +1,5 @@
 # Reso
+![Reso logo](https://github.com/tpepin96/reso/blob/master/reso_logo.gif)
 
 Reso is a graphical circuit-design programming language and almost a cellular automata. For fun and education, written using Python3.
 
