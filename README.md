@@ -1,13 +1,13 @@
 # Reso
 ![Reso logo](https://github.com/tpepin96/reso/blob/master/reso_logo.gif)
 
-Reso is a graphical circuit-design programming language and almost a cellular automata. For fun and education, written using Python3.
+Reso is a graphical digital logic design language. For fun and education, written using Python3.
 
-Inputs are PNG images with a simple palette; outputs are also PNG images.
+Reso is by redstone (Minecraft) and wireworld (cellular automata). Inputs are PNG images with a simple palette; outputs are also PNG images. This repository includes an implementation of the language. 
 
 ## Usage
 
-Reso only supports command line usage or calling from the ResoBoard class. Inputs and outputs are in the form of images.
+Reso only supports command line usage. (It's unfortunate, as a GUI would be great!) Inputs and outputs are images.
 
 ### Command line
 
@@ -23,7 +23,7 @@ If you only wanted to save the end result, add the "-o" flag, as such:
 python3 reso.py ~/helloworld.png -i 12 -s hello_ -v -o
 ```
 
-Full usage:
+Full CLI usage:
 
 ```
 usage: reso.py load_location [--iterate ITERATE] [--save SAVE] [--outputlast] [--verbose]    
@@ -57,7 +57,9 @@ There are currently 48 reserved colors (12 hues of 4 shades each). Of these, onl
 | Bright cyan (#0ff)    | XOR logic node        |
 | Dark cyan (#088)      | AND logic node        |
 
-Despite the 24 reserved colors, this may be expanded. Black and White are considered the only safe 'whitespace' colors. 
+**Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires. (There are examples below!) (TODO: There aren't actually examples yet.)
+
+Black and white (#000 and #fff, respectively) are the only safe colors. Any other color may be reserved at any time!
 
 Here is the full list of reserved colors. Of these, only R1, R2, C1, C2, B1, B2, and M1 and M2 are in use.
 
