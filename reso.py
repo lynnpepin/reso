@@ -10,6 +10,14 @@ def main(load_filename,
          iterations = 1,
          save_each_iteration = True,
          V = False):
+    """
+    load_filename: String; location from which to load the image from
+    save_prefix:   String; location to save the file to.
+    iterations:    Int, number of times to update the circuit.
+    save_each_iteration: Bool; if true, save an image of the circuit each iteration.
+    V: Bool; verbosity.
+    """
+    
     
     num_digits_in_fname = ceil(log(iterations+.1,10))
     

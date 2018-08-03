@@ -78,12 +78,12 @@ class ResoBoard:
         #   Sets up associations between those regions so that they can be quickly accessed,
         #   And initializes Wire and Node objects corresponding to each region.
         
-        #### Private and publicly available objects after __init__:
+        #### Provides:
         # self._image       NP array (w, h, 3)
         # self._resel_map   NP array (w, h, resel values)
         # self._RM          Region mapper (where both on/off wires are considered the same class)
         # self._resel_objects
-            # List of Wire() or Node() objects; indexed by region ID
+            # List of Wire() or Node() objects; indexed by arbitrary unique region ID (int)
         # self._red_wires, _blue_wires, _inputs, _outputs, _ands, _xors
             # Lists of Wire() (for *_wires) or Node() objects
             # Point to the same objects as in self._resel_objects
@@ -98,7 +98,6 @@ class ResoBoard:
         # Leftover arguments:
         # self._resel_to_rgb
         # self._rgb_to_resel
-        
 
         #### Loading the image and converting it to self._resel_map
         # 'image' can be a string or a numpy aray.
@@ -108,7 +107,7 @@ class ResoBoard:
         # else: assume image is of format (width, height, 3), indexed (x,y)
         self._image = image
         
-        # Convert our image to a resel_map (e.g. (255,0,0) -> pR
+        # Convert our image to a resel_map (e.g. (255,0,0) becomes pR)
         width = self._image.shape[0]
         height = self._image.shape[1]
         self._resel_map = np.zeros((width, height))
@@ -219,9 +218,9 @@ class ResoBoard:
         self._resel_to_rgb = resel_to_rgb
     
     
-    def _update(self, resel_map = True, image = True):
-        # Update the resel map and the image
-        # Has not been tested!
+    def _update(self, resel_map = False, image = True):
+        # Update the values  in resel map and in the image
+        # Use case: You ran iterate() and want to see the new image.
         if resel_map or image: # Only loop if we want to update something!
             for oncolor, offcolor, wires in ((pR, pr, self._red_wires), (pB, pb, self._blue_wires)):
                 for wire in wires:
@@ -243,10 +242,12 @@ class ResoBoard:
     def get_image(self):
         # Return the Numpy array containing the underlying image.
         # (Note: You may want to use np.swapaxes(_image, 0, 1))
+        #   (It may be better to just do that here...)
         return self._image
     
     def iterate(self, update_resels = True, update_image = True):
-        # Iterate the board, updating the Wires() objects.
+        # Iterate the board, updating every Wire() object.
+            # Also updates the resels if update_resels, and the image if update_image
         
         # For each wire,
         for wire in (self._red_wires + self._blue_wires):
@@ -255,7 +256,6 @@ class ResoBoard:
                 # Update the internal states of adjacent xor, and, outputs
                 for xornode in self._adj_xors[inputnode.regionid]:
                     xornode.state = xornode.state ^ wire.state
-                    #print("xornode",xornode.regionid,"now",xornode.state)
                 for andnode in self._adj_ands[inputnode.regionid]:
                     if not (andnode.state == -1):
                         if wire.state == False:
