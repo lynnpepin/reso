@@ -46,16 +46,16 @@ Reso programs are RGB images defined by pixels of different colors. Different hu
 
 There are currently 48 reserved colors (12 hues of 4 shades each). Of these, only 4 hues with 2 shades each have syntactic meaning:
 
-| Color          | Meaning               | Hex code |
-| ---            | ---                   | ---      |
-| Bright red     | Red wire (on)         | #ff0000  |
-| Dark red       | Red wire (off)        | #800000  |
-| Bright blue    | Blue wire (on)        | #0000ff  |
-| Dark blue      | Blue wire (off)       | #000080  |
-| Bright magenta | Output (node to wire) | #ff00ff  |
-| Dark magenta   | Input (wire to node)  | #800080  |
-| Bright cyan    | XOR logic node        | #00ffff  |
-| Dark cyan      | AND logic node        | #008080  |
+| Color          | Meaning               | Hex code       |
+| ---            | ---                   | ---            |
+| Bright red     | Red wire (on)         | ```#ff0000```  |
+| Dark red       | Red wire (off)        | ```#800000```  |
+| Bright blue    | Blue wire (on)        | ```#0000ff```  |
+| Dark blue      | Blue wire (off)       | ```#000080```  |
+| Bright magenta | Output (node to wire) | ```#ff00ff```  |
+| Dark magenta   | Input (wire to node)  | ```#800080```  |
+| Bright cyan    | XOR logic node        | ```#00ffff```  |
+| Dark cyan      | AND logic node        | ```#008080```  |
 
 **Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires. (There are examples below!) (TODO: There aren't actually examples yet.)
 
