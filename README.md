@@ -82,7 +82,7 @@ Here is the full list of currently reserved colors. Of these, only R1, R2, C1, C
 
 ## Examples
 
-Check back later for some examples of running Reso programs!
+![This is Reso gif](https://github.com/tpepin96/reso/blob/master/examples/this_is_reso.gif)
 
 ## Things to be done:
 
