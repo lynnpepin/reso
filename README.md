@@ -1,17 +1,15 @@
 # Reso
 ![Reso logo](https://github.com/tpepin96/reso/blob/master/reso_logo.gif)
 
-Reso is a graphical digital logic design language. For fun and education, written using Python3.
-
-Reso is by redstone (Minecraft) and wireworld (cellular automata). Inputs are PNG images with a simple palette; outputs are also PNG images. This repository includes an implementation of the language. 
+Reso is a graphical digital logic design language, inspired by Redstone and Wireworld. Made for fun and education, written using Python3.
 
 ## Usage
 
-Reso only supports command line usage. (It's unfortunate, as a GUI would be great!) Inputs and outputs are images.
+This implementation of Reso supports command line usage. Input is a single image, and outputs are iterations of the Reso simulation of the circuit described in the first image.
 
 ### Command line
 
-Here's an example. Load ~/helloworld.png, iterate 12 times, and save the results to ~/hello_xx.png. "-v" means "Verbose".
+Here's an example: Load ~/helloworld.png, iterate 12 times, and save the results to ~/hello_xx.png. "-v" means "Verbose".
 
 ```
 python3 reso.py ~/helloworld.png -i 12 -s hello_ -v
@@ -57,7 +55,7 @@ There are currently 48 reserved colors (12 hues of 4 shades each). Of these, onl
 | Bright cyan    | XOR logic node        | ```#00ffff```  |
 | Dark cyan      | AND logic node        | ```#008080```  |
 
-**Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires. (There are examples below!) (TODO: There aren't actually examples yet.)
+**Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires.
 
 Black and white (#000 and #fff, respectively) are the only safe 'whitespace' colors. These will never have any semantic meaning. Any other color may be reserved at any time.
 
@@ -84,10 +82,12 @@ Here is the full list of currently reserved colors. Of these, only R1, R2, C1, C
 
 ![This is Reso gif](https://github.com/tpepin96/reso/blob/master/examples/this_is_reso.gif)
 
+More examples to come!
+
 ## Things to be done:
 
-Reso is very new. While Turing-complete, plans exist to add functionality to the yet-unused resrved palette. E.g. Perhaps the unused yellow-color could interact with RaspberryPi GPIO pins.
+Reso is very new. While Turing-complete, I might add some functionality in the reserved-colors someday. E.g. It'd be cool if the (currently unused) yellow-color could interact with, say, GPIO pins.
 
-Being such a visual language, an MS-Paint-esque IDE of sorts would be useful!
+Being such a visual language, an MS-Paint-esque IDE of sorts would be a cool and fun project!
 
-Finally, being colorblind can make using Reso more difficult. If there is demand for it, customizable pallettes are possible.
+Finally, being colorblind would probably make using Reso more difficult. Customizable pallets could help alleviate that, and it shouldn't be too hard for me to implement.
