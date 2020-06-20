@@ -1,7 +1,7 @@
 # Reso
-![Reso logo](https://github.com/tpepin96/reso/blob/master/reso_logo.gif)
+![Reso logo](https://gitlab.com/lynnpepin/reso/-/raw/master/reso_logo.gif)
 
-Reso is a graphical digital logic design language, inspired by Redstone and Wireworld. Made for fun and education, written using Python3.
+Reso is a low-level circuit design language, kind of like Redstone or Wireworld. You can describe a graph using an image.
 
 ## Usage
 
@@ -40,9 +40,8 @@ other arguments:
 
 ### Palette
 
-Reso programs are RGB images defined by pixels of different colors. Different hues have different functional meanings.
+The palette is an important part of Reso! You can define a circuit using an image. Any pixel with a color in this palette of eight colors has semantic meaning, any other color doesn't.
 
-There are currently 48 reserved colors (12 hues of 4 shades each). Of these, only 4 hues with 2 shades each have syntactic meaning:
 
 | Color          | Meaning               | Hex code       |
 | ---            | ---                   | ---            |
@@ -55,13 +54,13 @@ There are currently 48 reserved colors (12 hues of 4 shades each). Of these, onl
 | Bright cyan    | XOR logic node        | ```#00ffff```  |
 | Dark cyan      | AND logic node        | ```#008080```  |
 
+For backwards compatibility, we reserve a total of 48 colors.
+
 **Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires.
 
-Black and white (#000 and #fff, respectively) are the only safe 'whitespace' colors. These will never have any semantic meaning. Any other color may be reserved at any time.
+Black and white (`#000` and `#fff`, respectively) are the only safe 'whitespace' colors. These will never have any semantic meaning. Any other color may be reserved at any time.
 
-Each f, 8, 4, and 0 corresponds to hex 0xff, 0x80, 0x40, and 0x00, respectively.
-
-Here is the full list of currently reserved colors. Of these, only R1, R2, C1, C2, B1, B2, and M1 and M2 are in use.
+Here's that full palette:
 
 | Hue             | Saturated (1)    | Dark (2)  | Light (3)     | Unsaturated (4)   |
 | ---             | ---              | ---       | ---           | ---               |
@@ -82,12 +81,10 @@ Here is the full list of currently reserved colors. Of these, only R1, R2, C1, C
 
 ![This is Reso gif](https://github.com/tpepin96/reso/blob/master/examples/this_is_reso.gif)
 
-More examples to come!
-
 ## Things to be done:
 
-Reso is very new. While Turing-complete, I might add some functionality in the reserved-colors someday. E.g. It'd be cool if the (currently unused) yellow-color could interact with, say, GPIO pins.
+Reso is really a graph computation model, and images are a way to define a graph. I want to better decouple that model, and make this a repository a reference implementation.
 
-Being such a visual language, an MS-Paint-esque IDE of sorts would be a cool and fun project!
+Some kind of GUI would be nifty too, rather than requiring expertise in some external graphical application.
 
-Finally, being colorblind would probably make using Reso more difficult. Customizable pallets could help alleviate that, and it shouldn't be too hard for me to implement.
+This is also really slow. I want to add connectivity with Raspberry Pi GPIO pins in some manner so this can be used with real circuits, but first I want to make this faster! Maybe C or something.
