@@ -1,5 +1,5 @@
 # Reso
-![Reso logo](https://github.com/tpepin96/reso/blob/master/reso_logo.gif)
+![Reso logo](./reso_logo.gif)
 
 Reso is a graphical digital logic design language, inspired by Redstone and Wireworld. Made for fun and education, written using Python3.
 
