@@ -7,6 +7,7 @@ Reso is a low-level circuit design language, kind of like Redstone or Wireworld.
 
 This implementation of Reso supports command line usage. Input is a single image, and outputs are iterations of the Reso simulation of the circuit described in the first image.
 
+
 ### Command line
 
 Here's an example: Load ~/helloworld.png, iterate 12 times, and save the results to ~/hello_xx.png. "-v" means "Verbose".
@@ -88,3 +89,33 @@ Reso is really a graph computation model, and images are a way to define a graph
 Some kind of GUI would be nifty too, rather than requiring expertise in some external graphical application.
 
 This is also really slow. I want to add connectivity with Raspberry Pi GPIO pins in some manner so this can be used with real circuits, but first I want to make this faster! Maybe C or something.
+
+## Architecture
+
+```
+.
+├── doc
+│       Contains a (WIP) whitepaper meant to describe this more formally.
+│
+├── README.md
+├── regionmapper.py
+│       A tool that is used to map adjacent elements in a 2D array to a graph
+│       described as a dict. Used to map contiguous regions of pixels in a Reso
+│       program to nodes in a graph, and vice-versa.
+├── resoboard.py
+│       Implements Reso as a "board". Example usage:
+│           `board = ResoBoard(image); board.iterate(); img = board.get_image()`
+│       Should be updated to use Pythonic Enums, proper docstrings, etc, but
+│       the documentation is there!
+│
+│       The class ResoBoard does the heavy lifting here. If you want to use this
+│       in another program, resoboard.ResoBoard is what you want to import.
+│
+├── reso.py
+│       Provides command-line access to Reso.
+├── testing
+│       Contains images used in tests.py
+└── tests.py
+        Contains unit tests for this program
+
+```
