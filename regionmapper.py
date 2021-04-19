@@ -1,7 +1,7 @@
 import numpy as np
 
 '''
-Public-facing variables:
+Provides:
 
 ortho_map = ((1,0),  (0,-1), (-1,0), (0,1))
 diag_map  = ((1,-1), (-1,-1),(-1,1), (1,1))
@@ -49,12 +49,25 @@ RegionMapper(image,
 '''
 
 
-# Common maps
-# E.g. ortho_map defines an orthogonal neighborhood
+# Package constants, useful for defining neighborhoods.
+# ortho_map defines an orthogonal neighborhood
+# diag_map  defines a diagonal neighborhood
 ortho_map = ((1,0),  (0,-1), (-1,0), (0,1))
 diag_map  = ((1,-1), (-1,-1),(-1,1), (1,1))
 
 def _value_to_class(class_dict, value):
+    """TODO
+    
+    :param class_dict: A mapping of tuples (i.e. RGB pixels) to integers
+    :type class_dict: Dict of tuple to integer
+    :param value: 
+    :type value:
+    
+    :raises ValueError:
+    
+    :returns:
+    :rtype:
+    """
     if len(value.shape) == 1: # Is tuple-able
         if tuple(value) in class_dict.keys():
             return class_dict[tuple(value)]
@@ -69,10 +82,24 @@ def _value_to_class(class_dict, value):
 
 
 def _class_to_map(nbhd_offsets, value, default=ortho_map):
+    """TODO
+    
+    :param nbhd_offsets:
+    :type nbhd_offsets:
+    :param value:
+    :type value:
+    :param default:
+    :type default:
+    
+    :returns:
+    :rtype:
+    """
     # e.g. _class_to_map(contiguities, 3)
     # where contiguities = { 3 : ortho_map + diag_map, ... }
     # returns contiguities[3]
     # This is used to identify the x and y offsets used in the contiguities and adjacencies
+    
+    # TODO: I think this can be set up with a normal dictionary...
     if value in nbhd_offsets.keys():
         return nbhd_offsets[value]
     else:
@@ -80,6 +107,24 @@ def _class_to_map(nbhd_offsets, value, default=ortho_map):
 
 
 def _get_adjacent_pixels(x, y, w, h, nbhd_map = ortho_map, wrap = False):
+    """TODO
+    
+    :param x:
+    :type x:
+    :param y:
+    :type y:
+    :param w:
+    :type w:
+    :param h:
+    :type h:
+    :param nbhd_map:
+    :type nbhd_map:
+    :param wrap:
+    :type wrap:
+    
+    :returns:
+    :rtype:
+    """
     # Returns only valid pixels; order of pixels not guaranteed
     # E.g. adjacent_pixels(0,0,3,4) = [(1,0),(0,3),(0,2),(0,1)]
     # E.g. adjacent_pixles(0,0,0,0, wrap=False) = [(1,0),(0,1)]
@@ -95,6 +140,21 @@ def _get_adjacent_pixels(x, y, w, h, nbhd_map = ortho_map, wrap = False):
 
 
 class RegionMapper:
+    """TODO
+    
+    :param image:
+    :type image:
+    :param class_dict:
+    :type class_dict:
+    :param contiguities:
+    :type contiguities:
+    :param adjacencies:
+    :type adjacencies:
+    :param sparse:
+    :type sparse:
+    :param wrap:
+    :type wrap:
+    """
     def __init__(self,
                  image,                 # 2D Numpy Array
                  class_dict,            # Dict of (value) --> Int >= 1
@@ -105,7 +165,8 @@ class RegionMapper:
         
         width, height = image.shape[:2]
         
-        assert(len(image.shape) == 3 or len(image.shape) == 2), "image should be np array shaped (width, height) or (width, height, number_of_channels_in_image)"
+        assert(len(image.shape) == 3 or len(image.shape) == 2), \
+            "image should be np array shaped (width, height) or (width, height, number_of_channels_in_image)"
         
         ####
         # Create self._image:
@@ -177,30 +238,68 @@ class RegionMapper:
         ####
         self._adjacent_regions = [[] for _ in range(len(self._regions))]
         
-        for ii, (region_class, list_of_pixels) in enumerate(self._regions): #ii is region id
+        #ii is region id
+        for ii, (region_class, list_of_pixels) in enumerate(self._regions):
             # nbhd_map = The list of pixel offsets of what this class considers its neighbours
             nbhd_map = _class_to_map(nbhd_offsets = adjacencies, value = region_class)
             
-            for xi, yi in list_of_pixels:                               # For every pixel in region ii,
-                for xJ, yJ in _get_adjacent_pixels(x=xi, y=yi, w=width, h=height, nbhd_map = nbhd_map, wrap = wrap): # For every pixel next to it,
-                    if not self._image[xJ,yJ] == 0:                     # If the neighbour is a valid region (not empty) and
-                        neighbour = self._region_at_pixel[xJ,yJ]        # (neighbour = The region number of the neighbour)
-                        if not (neighbour == ii):                       # If the neighbour is not us,
-                            if not neighbour in self._adjacent_regions[ii]: # and if we didn't already consider this neighbour...
-                                self._adjacent_regions[ii].append(neighbour)# Add neighbour!
+            # For every pixel in region ii,
+            for xi, yi in list_of_pixels:
+                # For every pixel adjacent to that pixel,
+                for xJ, yJ in _get_adjacent_pixels(x=xi, y=yi, w=width, h=height, nbhd_map = nbhd_map, wrap = wrap):
+                    # If the neighbour is a valid region (not empty),
+                    if not self._image[xJ,yJ] == 0:
+                        # (neighbour is an integer representing that region)
+                        neighbour = self._region_at_pixel[xJ,yJ]
+                        # If the neighbour is not us,
+                        if not (neighbour == ii):                      
+                            # If we didn't already consider this neighbour...
+                            if not neighbour in self._adjacent_regions[ii]:
+                                # Add that neighbour to our list of regions!
+                                self._adjacent_regions[ii].append(neighbour)
         
         
-    def region_at_pixel(self,x,y):
+    def region_at_pixel(self, x, y):
+        """TODO:
+        :param x:
+        :type x:
+        :param y:
+        :type y:
+        
+        :returns:
+        :rtype:
+        """
         if self._image[x,y] == 0:
             return -1
         else:
             return self._region_at_pixel[x,y]
     
     def regions(self, region_id):
+        """TODO:
+        :param region_id:
+        :type region_id:
+        
+        :returns:
+        :rtype:
+        """
         return self._regions[region_id]
     
-    def regions_with_class(self,class_number):
+    def regions_with_class(self, class_number):
+        """TODO:
+        :param class_number:
+        :type class_number:
+        
+        :returns:
+        :rtype:
+        """
         return self._regions_with_class[class_number]
     
     def adjacent_regions(self,region_id):
+        """TODO:
+        :param class_number:
+        :type class_number:
+        
+        :returns:
+        :rtype:
+        """
         return self._adjacent_regions[region_id]

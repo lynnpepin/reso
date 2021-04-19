@@ -2,6 +2,7 @@ from PIL import Image
 import numpy as np
 from regionmapper import ortho_map, diag_map, RegionMapper
 
+# todo: clean these up
 #### Palette stuff: RGB <--> 'resel' conversion
 # Enumerations for each of the colors!
 # Numbers are arbitrary, but note: 0 implicitly means 'blank'; do not use, and numbers must be unique.
@@ -49,8 +50,19 @@ def _get(d, k, default=0):
     else:
         return default
 
+# TODO: https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html
+
 #### Wire and Node classes used below to hold data about the state during iteration
 class Wire:
+    """TODO
+    
+    :param regionid:
+    :type regionid:
+    :param state:
+    :type state:
+    :param next_state:
+    :type next_state:
+    """
     def __init__(self, regionid, state = False, next_state = False):
         self.regionid = regionid
         self.state = state
@@ -58,7 +70,15 @@ class Wire:
         # State corresponds to the visual state of the wire between iterations
         # next_state is used only during iteration and remains false
 
+# todo: consider making this a dataclass?
 class Node:
+    """TODO
+    
+    :param regionid:
+    :type regionid:
+    :param state:
+    :type state:
+    """
     # Node is everything that is not a wire
     def __init__(self, regionid, state = False):
         self.regionid = regionid
@@ -68,10 +88,19 @@ class Node:
 
 
 class ResoBoard:
+    """TODO
+    
+    :param image:
+    :type image:
+    :param resel_to_rgb:
+    :type resel_to_rgb:
+    :param _rgb_to_resel:
+    :type _rgb_to_resel:
+    """
     def __init__(self,
-                 image,
-                 resel_to_rgb = _resel_to_rgb,
-                 rgb_to_resel = _rgb_to_resel):
+        image,
+        resel_to_rgb = _resel_to_rgb,
+        rgb_to_resel = _rgb_to_resel):
         ##### Initialization:
         #   Grabs the image, converts it to self._resel_map, 
         #   identifies the different regions (wires, inputs, etc.) in self._resel map,
@@ -219,6 +248,15 @@ class ResoBoard:
     
     
     def _update(self, resel_map = False, image = True):
+        """TODO
+        :param resel_map:
+        :type resel_map:
+        :param image:
+        :type image:
+        
+        :returns:
+        :rtype:
+        """
         # Update the values  in resel map and in the image
         # Use case: You ran iterate() and want to see the new image.
         if resel_map or image: # Only loop if we want to update something!
@@ -236,16 +274,35 @@ class ResoBoard:
                 
     
     def get_resel_map(self):
+        """TODO
+        
+        :returns:
+        :rtype:
+        """
         # Return a Numpy array representing the Reso board
         return self._resel_map
     
     def get_image(self):
+        """TODO
+        
+        :returns:
+        :rtype:
+        """
         # Return the Numpy array containing the underlying image.
         # (Note: You may want to use np.swapaxes(_image, 0, 1))
         #   (It may be better to just do that here...)
         return self._image
     
     def iterate(self, update_resels = True, update_image = True):
+        """TODO
+        :param update_resels:
+        :type update_resels:
+        :param update_image:
+        :type update_image:
+        
+        :returns:
+        :rtype:
+        """
         # Iterate the board, updating every Wire() object.
             # Also updates the resels if update_resels, and the image if update_image
         

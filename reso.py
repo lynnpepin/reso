@@ -5,12 +5,14 @@ from math import log, ceil
 import numpy as np
 
 
-def main(load_filename,
-         save_prefix,
-         iterations = 1,
-         save_each_iteration = True,
-         V = False):
-    """
+def main(
+    load_filename,
+    save_prefix,
+    iterations = 1,
+    save_each_iteration = True,
+    V = False):
+    """TODO: Proper documentation here!
+    
     load_filename: String; location from which to load the image from
     save_prefix:   String; location to save the file to.
     iterations:    Int, number of times to update the circuit.
@@ -18,6 +20,21 @@ def main(load_filename,
     V: Bool; verbosity.
     """
     
+    """TODO
+    :param load_filename:
+    :type load_filename:
+    :param save_prefix:
+    :type save_prefix:
+    :param iterations:
+    :type iterations:
+    :param save_each_iteration:
+    :type save_each_iteration:
+    :param V:
+    :type V:
+    
+    :return:
+    :rtype:
+    """
     
     num_digits_in_fname = ceil(log(iterations+.1,10))
     
