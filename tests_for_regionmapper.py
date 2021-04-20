@@ -6,7 +6,7 @@ from regionmapper import RegionMapper, ortho_map, diag_map
 
 class RegionMapperTest_OrthoNbhd_NoWrap(ut.TestCase):
     def setUp(self):
-        self.pic = np.swapaxes(np.array(Image.open("test_image.png")), 0, 1)
+        self.pic = np.swapaxes(np.array(Image.open("testing/region_mapper_test_image.png")), 0, 1)
         self.classes = { (255,0,0) : 1, (0,255,0) : 2, (0,0,255) : 3 }
         self.contiguity_map = { 1 : ortho_map + diag_map, 2 : ortho_map, 3 : diag_map }
             # Red is ortho and diag contiguous,
