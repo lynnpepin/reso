@@ -1,5 +1,12 @@
 import numpy as np
 
+# todo:
+# consider making this faster,
+# per https://stackoverflow.com/questions/12321899/
+# this is used in the 'compilation' step
+
+# todo: this big docstring isn't necessary...
+
 '''
 Provides:
 
@@ -56,40 +63,62 @@ ortho_map = ((1,0),  (0,-1), (-1,0), (0,1))
 diag_map  = ((1,-1), (-1,-1),(-1,1), (1,1))
 
 def _value_to_class(class_dict, value):
-    """TODO
+    """ Map numpy array values using a dictionary.
+    Convenience function for dictionaries that are keyed on tuples or integers.
     
-    :param class_dict: A mapping of tuples (i.e. RGB pixels) to integers
-    :type class_dict: Dict of tuple to integer
-    :param value: 
-    :type value:
+    Used to map integers (numpy arrays of integers, shape (3,)) to integers.
+    These integers enumerate the class that a pixel belongs to.
     
-    :raises ValueError:
+    :param class_dict: A mapping of tuples of integers (i.e. RGB pixels) to integers
+    :type class_dict: dict
+    :param value: The key used to index the class_dict.
+    :type value: numpy.ndarray
     
-    :returns:
-    :rtype:
+    :raises ValueError: If the value has a shape with 2 or more axes.
+    
+    :returns: A mapping per class_dict, or 0 if that value is not available.
+    :rtype: Anything
+    
+    >>> _value_to_class(
+    ...     {(1,2,3) : 'some_class', 789 : 'another_class'},
+    ...      np.array([1,2,3]))
+    'some_class'
+
+    >>> _value_to_class(
+    ...     {(1,2,3) : 'some_class', 789 : 'another_class'},
+    ...      np.array(789))
+    'another_class'
     """
-    if len(value.shape) == 1: # Is tuple-able
+    # This was written when I was a baby. There's probably a better way to do
+    # this using dictionaries.
+    
+    # E.g. If the shape of the array = (3,), e.g. np.array([255, 255, 255])
+    if len(value.shape) == 1:
         if tuple(value) in class_dict.keys():
             return class_dict[tuple(value)]
         else:
             return 0
-    elif len(value.shape) == 0: # Is just an int
+    # E.g. if the shape of the array = (), e.g. np.array(12345)
+    elif len(value.shape) == 0:
         if value in class_dict.keys():
-            return class_dict[value]
-        else: return 0
+            return class_dict[a.reshape(-1)[0]]
+        else:
+            return 0
     else:
         raise ValueError
 
 
 def _class_to_map(nbhd_offsets, value, default=ortho_map):
-    """TODO
+    """Index a dictionary 'nbhd_offsets' on 'value', returning 'default' if
+    'value' is not a valid key.
     
-    :param nbhd_offsets:
-    :type nbhd_offsets:
-    :param value:
-    :type value:
-    :param default:
-    :type default:
+    :param nbhd_offsets: 
+    :type nbhd_offsets: dict
+    :param value: The key used to index the dictionary 'nbhd_offsets'
+    :type value: Any hashable object
+    :param default: Default value to return if value is not in the keys, defaults
+        to regionmapper.ortho_map
+    :type default: Any object
     
     :returns:
     :rtype:
@@ -99,7 +128,9 @@ def _class_to_map(nbhd_offsets, value, default=ortho_map):
     # returns contiguities[3]
     # This is used to identify the x and y offsets used in the contiguities and adjacencies
     
-    # TODO: I think this can be set up with a normal dictionary...
+    # This was writen when I was a baby.
+    # This can probably be replaced with collections.defaultdict... todo!
+    
     if value in nbhd_offsets.keys():
         return nbhd_offsets[value]
     else:
@@ -107,23 +138,42 @@ def _class_to_map(nbhd_offsets, value, default=ortho_map):
 
 
 def _get_adjacent_pixels(x, y, w, h, nbhd_map = ortho_map, wrap = False):
-    """TODO
+    """Returns a list of indices for adjacent pixels given a 'neighborhood map'.
     
-    :param x:
-    :type x:
-    :param y:
-    :type y:
-    :param w:
-    :type w:
-    :param h:
-    :type h:
-    :param nbhd_map:
+    Where (x,y) is the central pixel index, this will return a list of adjacent
+    pixels, as defined by the offsets in 'nbhd_map'.
+    
+    E.g. for (x,y) = (3,6) and nbhd_map = ((1,0),  (0,-1), (-1,0), (0,1)),
+    this will return [(4, 6), (3, 5), (2, 6), (3, 7)].
+    
+    The 'wrap' parameter is only important if (x,y) are near the (w,h) boundaries.
+    See the examples
+    
+    :param x: X-coordinate of the image
+    :type x: Int
+    :param y: Y-coordinate of the image
+    :type y: Int
+    :param w: Width of the image
+    :type w: Int
+    :param h: Height of the image
+    :type h: Int
+    :param nbhd_map: Iterable of tuple defining the "neighborhood". Defaults to
+        region_mapper.ortho_map.
     :type nbhd_map:
-    :param wrap:
-    :type wrap:
+    :param wrap: If True, wrap around the dictionary.
+    :type wrap: Bool
     
-    :returns:
-    :rtype:
+    :returns: List of indices representing 'neighbors' of a pixel.
+    :rtype: list of tuple of int
+    
+    >>> _get_adjacent_pixels(3,6,10,10)
+    [(4, 6), (3, 5), (2, 6), (3, 7)]
+
+    >>> _get_adjacent_pixels(x=3,y=6,w=4,h=7)
+    [(3, 5), (2, 6)]
+
+    >>> _get_adjacent_pixels(x=3,y=6,w=4,h=7, wrap=True)
+    [(0, 6), (3, 5), (2, 6), (3, 0)]
     """
     # Returns only valid pixels; order of pixels not guaranteed
     # E.g. adjacent_pixels(0,0,3,4) = [(1,0),(0,3),(0,2),(0,1)]
@@ -205,7 +255,7 @@ class RegionMapper:
                     list_of_pixels_in_region = []   # ... and set up a list to fill with all these pixels!
                     
                     ##Fill up list_of_pixels_in_region using BFS
-                    # contig_map: A list of what we consider "contigous" pixels. e.g. ((1,0),(-1,0)) only considers those left-right of us.
+                    # contig_map: A list of what we consider "contigous" pixels. e.g. ((1,0),(-1,0)) only considers those left and right of us.
                     contig_map = _class_to_map(nbhd_offsets = contiguities, value = region_class)
                     # pixels_under_consideration: Every pixel we are looking at but have not computed yet.
                     pixels_under_consideration = [(x,y)]
