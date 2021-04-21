@@ -192,6 +192,29 @@ def _get_adjacent_pixels(x, y, w, h, nbhd_map = ortho_map, wrap = False):
 class RegionMapper:
     """TODO
     
+    Given an image, the goal is to identify contiguous regions of the same color
+    pixel, where 'contiguity' is defined per-color.
+    
+    A small glossary:
+     - Pixel: The basic element used in the region-mapper. Each pixel has colors
+        defined as 3 ints (e.g. such as (255,0,127)) and an (x,y) coordinate.
+     - Coordinate: Or pixel index, i.e. the (x,y) coordinate that defines a
+        unique location in an image.
+     - Class: An integer associated with the color of a pixel.
+        E.g. One might have {(255,0,0) : 1, (0, 255, 0) : 2, (0, 0, 255) : 3},
+        i.e. associated red, green, and blue with integers 1, 2, and 3.
+     - Contiguity: Contiguity is defined per-class. For example, red pixels might
+        only be contiguous on orthogonal neighbors, while blue pixels might be
+        contiguous on both orthogonal and diagonal neighbors.
+        "Contiguity" is defined per-class for flexibility.
+     - Region: A collection of pixels sharing the same class, defined by their
+        'contiguity'. Every region has a unique integer 'region id'.
+     - Region ID: A unique integer associated with each region after the
+        region-mapping algorithm is finished.
+     - Adjacency: A region that is next to another region. Adjacencies to regions
+        are defined similarly to contiguities.
+        
+    
     :param image:
     :type image:
     :param class_dict:
@@ -310,46 +333,63 @@ class RegionMapper:
         
         
     def region_at_pixel(self, x, y):
-        """TODO:
-        :param x:
-        :type x:
-        :param y:
-        :type y:
+        """Returns the ID of the region at that pixel,
+            or -1 if that region does not belong to a class.
+        :param x: x-index of pixel contained in the Region Mapper
+        :type x: Int
+        :param y: y-index of pixel contained in the Region Mapper
+        :type y: Int
         
-        :returns:
-        :rtype:
+        :returns: The class at pixel (x,y), or -1 if such a class does not exist.
+        :rtype: Int
         """
+        # todo: What was I thinking with this design?
+        # What was I thinking in 2018?
         if self._image[x,y] == 0:
             return -1
         else:
             return self._region_at_pixel[x,y]
     
     def regions(self, region_id):
-        """TODO:
-        :param region_id:
-        :type region_id:
+        """Given the ID of a region, return
+            (class_number, list of pixels indices in that region),
+        i.e. a list of (x,y) coordinates.
         
-        :returns:
-        :rtype:
+        E.g. regions(region_at_pixel(x=10,y=12)) will tell you (1) the type of
+        region at (10,12), and (2) every other pixel at that region.
+        
+        :param region_id: Integer that maps to a region.
+        :type region_id: Int
+        
+        :returns: Tuple of (class) and (list of pixel indices) in that region.
+        :rtype: Tuple
         """
         return self._regions[region_id]
     
     def regions_with_class(self, class_number):
-        """TODO:
-        :param class_number:
-        :type class_number:
+        """Given the number of a class, return all regions with that class.
         
-        :returns:
-        :rtype:
+        For a class with integer 3, return a list of all region indices
+        that have that class index.
+        
+        To get a list of pixel indices for a given region index, 
+         
+        :param class_number: The integer associated with a class.
+        :type class_number: Integer
+        
+        :returns: List of region IDs that have a given class number.
+        :rtype: List of int
         """
         return self._regions_with_class[class_number]
     
     def adjacent_regions(self,region_id):
-        """TODO:
-        :param class_number:
-        :type class_number:
+        """ Given the ID of a region, return all regions adjacent to it
+        (as defined by its entry in the adjacencies dictionary)
         
-        :returns:
-        :rtype:
+        :param region_id: The ID associated with a region of pixels.
+        :type region_id: Int
+        
+        :returns: List of all region IDs of regions adjacent to a given region ID.
+        :rtype: List of int (or empty list)
         """
         return self._adjacent_regions[region_id]
