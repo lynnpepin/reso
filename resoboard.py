@@ -1,58 +1,12 @@
 from PIL import Image
 import numpy as np
 from regionmapper import ortho_map, diag_map, RegionMapper
+from palette import pR, pY, pG, pC, pB, pM
+from palette import pr, py, pg, pc, pb, pm
+from palette import pO, pL, pT, pS, pP, pV
+from palette import po, pl, pt, ps, pp, pv
+from palette import get, resel_to_rgb, rgb_to_resel
 
-# todo: clean these up
-
-# Palette stuff below
-# 
-
-#### Palette stuff: RGB <--> 'resel' conversion
-# Enumerations for each of the colors!
-# Numbers are arbitrary, but note: 0 implicitly means 'blank'; do not use, and numbers must be unique.
-pR = ord('R')   # 82    # On red wire
-pr = ord('r')   # 114   # Off red wire
-pG = ord('G')   # 71    # Unused
-pg = ord('g')   # 103   # Unused
-pB = ord('B')   # 66    # On blue wire
-pb = ord('b')   # 98    # Off blue wire
-
-pY = ord('Y')   # 89    # Unused
-py = ord('y')   # 121   # Unused
-pC = ord('C')   # 67    # XOR node
-pc = ord('c')   # 99    # AND node
-pM = ord('M')   # 77    # Output node (from input/logic node to wire)
-pm = ord('m')   # 109   # Input node  (from wire to input/logic node)
-
-#_pal is just a helper; we loop over it to create our resel-rgb dicts.
-_pal = [(pR, (255,0,0)),
-        (pr, (128,0,0)),
-        (pG, (0,255,0)),
-        (pg, (0,128,0)),
-        (pB, (0,0,255)),
-        (pb, (0,0,128)),
-        (pY, (255,255,0)),
-        (py, (128,128,0)),
-        (pC, (0,255,255)),
-        (pc, (0,128,128)),
-        (pM, (255,0,255)),
-        (pm, (128,0,128))]
-
-# Cheap implementation of a bidict with default values
-_resel_to_rgb = dict()
-_rgb_to_resel = dict()
-
-for resel, rgb in _pal:
-    _rgb_to_resel[rgb] = resel
-    _resel_to_rgb[resel] = rgb
-
-def _get(d, k, default=0):
-    # Used to get a value from a dictionary,
-    # with a default value if that key is not found. 
-    if k in d.keys():
-        return d[k]
-    else:
-        return default
 
 # TODO: https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html
 
@@ -100,13 +54,13 @@ class ResoBoard:
     :type image:
     :param resel_to_rgb:
     :type resel_to_rgb:
-    :param _rgb_to_resel:
-    :type _rgb_to_resel:
+    :param rgb_to_resel:
+    :type rgb_to_resel:
     """
     def __init__(self,
         image,
-        resel_to_rgb = _resel_to_rgb,
-        rgb_to_resel = _rgb_to_resel):
+        resel_to_rgb = resel_to_rgb,
+        rgb_to_resel = rgb_to_resel):
         ##### Initialization:
         #   Grabs the image, converts it to self._resel_map, 
         #   identifies the different regions (wires, inputs, etc.) in self._resel map,
@@ -131,8 +85,8 @@ class ResoBoard:
             # self._adj_outputs[] by input_id, xor_id, or and_id
             # self._adj_wires[]   by output_id
         # Leftover arguments:
-        # self._resel_to_rgb
-        # self._rgb_to_resel
+        # self.resel_to_rgb
+        # self.rgb_to_resel
 
         #### Loading the image and converting it to self._resel_map
         # 'image' can be a string or a numpy aray.
@@ -148,7 +102,7 @@ class ResoBoard:
         self._resel_map = np.zeros((width, height))
         for ii in range(width):
             for jj in range(height):
-                self._resel_map[ii,jj] = _get(rgb_to_resel, tuple(self._image[ii,jj]))
+                self._resel_map[ii,jj] = get(rgb_to_resel, tuple(self._image[ii,jj]))
         
         #### Identify the different regions, giving us our self._RM (RegionMapper)
         # resel_map --> region mapping
@@ -248,9 +202,9 @@ class ResoBoard:
                     if adj_reg_class in classids:
                         to_dict[resel.regionid].append(self._resel_objects[adj_reg_id])
         
-        #### Set up the self._rgb_to_resel, self._resel_to_rgb for later use:
-        self._rgb_to_resel = rgb_to_resel
-        self._resel_to_rgb = resel_to_rgb
+        #### Set up the self.rgb_to_resel, self.resel_to_rgb for later use:
+        self.rgb_to_resel = rgb_to_resel
+        self.resel_to_rgb = resel_to_rgb
     
     
     def _update(self, resel_map = False, image = True):
@@ -269,7 +223,7 @@ class ResoBoard:
             for oncolor, offcolor, wires in ((pR, pr, self._red_wires), (pB, pb, self._blue_wires)):
                 for wire in wires:
                     color = oncolor if wire.state else offcolor # Color to set the wire to
-                    color_tuple = np.array(self._resel_to_rgb[color])
+                    color_tuple = np.array(self.resel_to_rgb[color])
                     regionid = wire.regionid
                     pixel_list = self._RM.regions(regionid)[1]
                     for ii, jj in pixel_list:

@@ -1,7 +1,7 @@
 from PIL import Image
 import unittest as ut
 import numpy as np
-from resoboard import pR, pr, pY, py, pG, pg, pC, pc, pB, pb, pM, pm, _rgb_to_resel, _resel_to_rgb, ResoBoard
+from resoboard import pR, pr, pY, py, pG, pg, pC, pc, pB, pb, pM, pm, rgb_to_resel, resel_to_rgb, ResoBoard
 
 class DefaultPaletteTests(ut.TestCase):
     def setUp(self):
@@ -11,10 +11,10 @@ class DefaultPaletteTests(ut.TestCase):
         pass
         
     def test_bidirectionality(self):
-        for rgb in _rgb_to_resel.keys():
-            self.assertEqual(_resel_to_rgb[_rgb_to_resel[rgb]], rgb)
-        for resel in _resel_to_rgb.keys():
-            self.assertEqual(_rgb_to_resel[_resel_to_rgb[resel]], resel)
+        for rgb in rgb_to_resel.keys():
+            self.assertEqual(resel_to_rgb[rgb_to_resel[rgb]], rgb)
+        for resel in resel_to_rgb.keys():
+            self.assertEqual(rgb_to_resel[resel_to_rgb[resel]], resel)
 
 class ResoBoardInitTest(ut.TestCase):
     def setUp(self):
