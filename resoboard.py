@@ -1,3 +1,14 @@
+'''resoboard.py
+
+A Reso circuit can be thought of as a 'board' that needs to be iterated upon.
+This code does the heavy lifting! Some important concepts:
+
+1. The 'palette' defines our base colors. We import a lot from 'palette'.
+2. A 'Board' holds all the information for a Reso circuit.
+   An 'image' is a grid of RGB pixels.
+   A  'board' is a grid of Reso elements (called **resels**).
+'''
+
 import numpy as np
 from PIL import Image
 
@@ -54,6 +65,7 @@ class Node:
 class ResoBoard:
     """TODO
     
+    
     :param image: Numpy array of shape (w, h, 3) representing the RGB image.
     :type image: numpy.ndarray
     :param resel_to_rgb:
@@ -64,12 +76,15 @@ class ResoBoard:
     def __init__(self,
         image,
         resel_to_rgb = resel_to_rgb,
-        rgb_to_resel = rgb_to_resel):
-        ##### Initialization:
-        #   Grabs the image, converts it to self._resel_map, 
-        #   identifies the different regions (wires, inputs, etc.) in self._resel map,
-        #   Sets up associations between those regions so that they can be quickly accessed,
-        #   And initializes Wire and Node objects corresponding to each region.
+        rgb_to_resel = rgb_to_resel
+    ):
+        """
+        Initialization (1) Grabs the image, (2) converts it to self._resel_map,
+        (3) identifies the different regions (wires, inputs, etc.) in
+        self._resel map, (4) Sets up associations between those regions so that
+        they can be quickly accessed, and (5) initializes Wire and Node objects
+        corresponding to each region.
+        """
         
         #### Provides:
         # self._image       NP array (w, h, 3)
