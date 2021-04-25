@@ -62,19 +62,53 @@ class Node:
         # and state locks to -1 if connected to an off wire.
 
 
+# todo: ResoBoard has wire colors hard-coded into it (pR, pr, pB, pb, etc.)
+# I'd prefer, instead, to abstract all that away, so it's easier to play with
+# other colors!
 class ResoBoard:
-    """TODO
+    """Holds a compiled Reso circuit and performs the logic of simulating over
+    said circuit.
+    
+    If you want to wrap around the core logic of Reso, this is what you want
+    to use!
+    
+    (Sorry functional-programming fanatics, maintaining state allows the
+    circuit to be compiled and operated on much more efficiently, and I don't
+    know how to maintain state in FP here without the code being ugly as sin!)
     
     
     :param image: Numpy array of shape (w, h, 3) representing the RGB image.
     :type image: numpy.ndarray
-    :param resel_to_rgb:
-    :type resel_to_rgb:
-    :param rgb_to_resel:
-    :type rgb_to_resel:
+    :param resel_to_rgb: Dict mapping 'resel' enums (per palette.py) to pixel
+        values, i.e. RGB 3-tuples.
+    :type resel_to_rgb: Dict
+    :param rgb_to_resel: Dict mapping pixel values (i.e. RGB 3-tuples) to 'resel'
+        enums.
+    :type rgb_to_resel: Dict
     
-    Provides:
-        TODO
+    Note that resel_to_rgb and rgb_to_resel form a bidict, i.e.
+        resel_to_rgb[rgb_to_resel[x]] = x, and
+        rgb_to_resel[resel_to_rgb[x]] = x
+    
+    Member variables:
+    _image: RGB image, numpy array, shape (w, h, 3)
+    _resel_map: Grid of resel values, i.e. numpy array of shape (w, h)
+    _RM: The RegionMapper object that actually maps regions of pixels/resels to 
+        'regions'.
+    _resel_objects: List of Wire() or Node() objects, indexed by their unique
+        region IDs.
+    _red_wires, _blue_wires, _inputs, _outputs, _ands, _xors:
+        Lists of Wire()/Node() objects, pointing to the same objects as in
+        _resel_objects.
+    
+    A bunch of adjacency dicts:
+    These are indexed by region_id, mapping to a list of all adjacent elements
+    (that is, Wire() or Node() objects.)
+    _adj_inputs: Indexed by ID of a wire element
+    _adj_xors: Indexed by ID of an input node
+    _adj_ands: Indexed by ID of an input node
+    _adj_outputs: Indexed by ID of an input node, an XOR node, or an AND node.
+    _adj_wires: Indexed by ID of output nodes.
     """
     def __init__(self,
         image,
@@ -87,68 +121,75 @@ class ResoBoard:
         self._resel map, (4) Sets up associations between those regions so that
         they can be quickly accessed, and (5) initializes Wire and Node objects
         corresponding to each region.
-        """
         
-        #### Provides:
-        # self._image       NP array (w, h, 3)
-        # self._resel_map   NP array (w, h, resel values)
-        # self._RM          Region mapper (where both on/off wires are considered the same class)
-        # self._resel_objects
-            # List of Wire() or Node() objects; indexed by arbitrary unique region ID (int)
-        # self._red_wires, _blue_wires, _inputs, _outputs, _ands, _xors
-            # Lists of Wire() (for *_wires) or Node() objects
-            # Point to the same objects as in self._resel_objects
-        # Adjacency dicts: Dictionaries mapped by region_id to a list of all adjacent Wire() or Node() objects
-            # E.g. _adj_inputs[], a dictionary indexed by wire region id, returns a list of all inputs (pm) adjacent to that wire
-            # We only need wire --> input, input --> xor/and/output, xor/and --> output, and output-->wire
-            # self._adj_inputs[]  by wire_id, 
-            # self._adj_xors[]    by input_id
-            # self._adj_ands[]    by input id
-            # self._adj_outputs[] by input_id, xor_id, or and_id
-            # self._adj_wires[]   by output_id
-        # Leftover arguments:
-        # self.resel_to_rgb
-        # self.rgb_to_resel
-
-        #### Loading the image and converting it to self._resel_map
-        # 'image' can be a string or a numpy aray.
-        # If 'image' is str, load it first.
+        
+        """
+        # First step: Load the image and convert it to _resel_map.
+        # Here, the 'image' can be a string (which will be loaded)
+        # or a prepared numpy array (of shape (w, h, 3).)
         if isinstance(image, str):
             image = np.swapaxes(np.array(Image.open(image)), 0, 1)[:,:,:3]
         # else: assume image is of format (width, height, 3), indexed (x,y)
         self._image = image
         
-        # Convert our image to a resel_map (e.g. (255,0,0) becomes pR)
+        # Now convert our image to a resel_map (e.g. (255,0,0) becomes pR).
         width = self._image.shape[0]
         height = self._image.shape[1]
         self._resel_map = np.zeros((width, height))
+        # Yeah I'm nesting for-loops rather than vectorizing this through a GPU.
+        # whatcha gonna do about it?!?
+        # (msubmit a patch? please? i don't know how to do these things on GPU
+        #  using Python, to be perfectly honest...)
         for ii in range(width):
             for jj in range(height):
                 self._resel_map[ii,jj] = get(rgb_to_resel, tuple(self._image[ii,jj]))
         
-        #### Identify the different regions, giving us our self._RM (RegionMapper)
-        # resel_map --> region mapping
-        class_dict = { pR : pR, pr : pR,    # pR is also used to denote red wires
-                       pB : pB, pb : pB,    # pB is also used to denote blue wires
-                       pG:pG, pg:pg, pC:pC, pc:pc, pY:pY, py:py, pM:pM, pm:pm } # Every other color maps to itself
-                       
-        contiguities = { pR : ortho_map + diag_map, pB : ortho_map + diag_map} # Wires are diagonally contiguous
+        # Identify the different regions, giving us our self._RM (RegionMapper)
+        # First, we note that 'on' wires and 'off' wires **are the same class!**
+        # So, for our regionmapper, we need them to map to the same class.
+        class_dict = { 
+            pR : pR, pr : pR,    # pR is also used to denote red wires
+            pB : pB, pb : pB,    # pB is also used to denote blue wires
+            pG : pG, pg : pg,    # Every other color maps to itself
+            pC : pC, pc : pc,
+            pY : pY, py : py,
+            pM : pM, pm : pm, 
+            pO : pO, po : po,
+            pL : pL, pl : pl,
+            pT : pT, pt : pt,
+            pS : pS, ps : ps,
+            pP : pP, pp : pp,
+            pV : pV, pv : pv
+        }
         
+        # Wires are diagonally contiguous (to make it easier for them to 'cross')
+        # while everything else is only orthogonally continuous
+        contiguities = {
+            pR : ortho_map + diag_map,
+            pB : ortho_map + diag_map
+        } # Wires are diagonally contiguous
+        
+        # Now we use our RegionMapper helper to identify all the distinct,
+        # contiguous regions that form the 'elements' of our circuit!
         self._RM = RegionMapper( self._resel_map,             
-                                 class_dict = class_dict,           
+                                 class_dict     = class_dict,           
                                  contiguities   = contiguities,
                                  sparse         = True)
-        # self._RM provides:
+        # As a reminder, self._RM (RegionMapper) provides:
         #   self._RM.region_at_pixel(x,y)
         #   self._RM.regions(id)
         #   self._RM.regions_with_class(class)
         #   self._RM.adjacent_regions(region_id)
         
-        #### Set up a Wire()/Node() object for each region, lists of all such objects (self._red_wires, etc...), and the regionid -> Wire()/Node() list self._resel_objects
-        #       It is redundant in space usage, but results in faster lookup times
-        #       Cleanup: But we can just use self._RM.regions_with_class(PR), right? It'll be uglier but who cares
+        # Now, we need to set up a Wire()/Node() object for each region.
+        # We need lists of all such objects (self._red_wires, etc...),
+        # and the regionid -> Wire()/Node() list self._resel_objects.
+        # This code is redundant in space, but we save time :)
+        # (... todo: this can be cleaned up? We can just use
+        # self._RM.regions_with_class(PR), right? It'll be uglier but who cares?)
         
-        self._resel_objects = [None]*len(self._RM._regions) # One entry for every region
+        self._resel_objects = [None]*len(self._RM._regions)
+        # # One entry in self._resel_objects for each region we have.
         self._red_wires     = []
         self._blue_wires    = []
         self._inputs        = []
@@ -156,14 +197,18 @@ class ResoBoard:
         self._ands          = []
         self._xors          = []
         
+        # Now we loop over all our regions, and their associated class type.
         for regionid, (classid, _) in enumerate(self._RM._regions):
-            if classid == pR or classid == pB: # A wire!
+            if classid == pR or classid == pB:
+                # Recall that off wires and on wires were both mapped to the same class.
                 new_object = Wire(regionid)
                 if classid == pR:
-                    self._red_wires.append(new_object) # Add it to _red_wires
+                    self._red_wires.append(new_object)
                 else:
-                    self._blue_wires.append(new_object) # Add it to _blue_wires
-            else:                              # A node!
+                    self._blue_wires.append(new_object)
+            else:
+                # It's not a wire, we have a node instead!
+                # We need to add it to the correct list of elements.
                 new_object = Node(regionid)
                 if classid == pm:
                     self._inputs.append(new_object)
@@ -173,15 +218,25 @@ class ResoBoard:
                     self._xors.append(new_object)
                 elif classid == pc:
                     self._ands.append(new_object)
-                elif classid in (pG, pg, pY, py):
+                elif classid in (
+                    pG, pg, pY, py, pO, po, pL, pl, pT, pt, pS, ps, pP, pp, pV, pv
+                ):
+                    # List of all reserved but not-yet-used colors
                     pass
                 else:
+                    # This should never happen!
+                    # Our region mapper should not have been able to get to this state...
                     print("Unrecognized classid", classid)
                     raise ValueError
             
+            # We also want whatever object we create to be stored in our list
+            # of all _resel_objects.
+            # (todo... can't we, at the end of this loop, add all our other lists
+            #  together to make one big list?)
             self._resel_objects[regionid] = new_object
         
-        # Turn on wires if they are on in the self._resel_map
+        # region), then that whole wire should be considered on.
+        # So, loop over every wire, and if any pixel is 'on', then turn it on!
         for wires in (self._red_wires, self._blue_wires): 
             for wire in wires:
                 wire_is_on = False
@@ -192,7 +247,8 @@ class ResoBoard:
                         break
                 wire.state = wire_is_on
 
-        #### Set up adjacency dictionaries. dict[region_id] -> Wire()/Node() object
+        # Now we set up adjacency dictionaries.
+        # For each of these, dict[region_id] -> Wire()/Node() object
         # _adj_inputs[]  for wire_id, 
         # _adj_xors[]    for all input cells
         # _adj_ands[]    for all input cells
@@ -224,7 +280,8 @@ class ResoBoard:
                     if adj_reg_class in classids:
                         to_dict[resel.regionid].append(self._resel_objects[adj_reg_id])
         
-        #### Set up the self.rgb_to_resel, self.resel_to_rgb for later use:
+        # Finally,  we want our cheap bidict for converting resels to pixels
+        # and  vice-versa
         self.rgb_to_resel = rgb_to_resel
         self.resel_to_rgb = resel_to_rgb
     
