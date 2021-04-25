@@ -72,6 +72,9 @@ class ResoBoard:
     :type resel_to_rgb:
     :param rgb_to_resel:
     :type rgb_to_resel:
+    
+    Provides:
+        TODO
     """
     def __init__(self,
         image,
@@ -226,72 +229,102 @@ class ResoBoard:
         self.resel_to_rgb = resel_to_rgb
     
     
-    def _update(self, resel_map = False, image = True):
-        """TODO
-        :param resel_map:
-        :type resel_map:
-        :param image:
-        :type image:
+    def _update(self, resel_map = False, update_image = True):
+        """Update the values in resel map and in the image.
+        This updates the "externally visible" parts of a ResoBoard.
         
-        :returns:
-        :rtype:
+        For speed, this isn't necessary to do every time! None of the information
+        updated in this function is necessary for the logic, only the output.
+                
+        :param resel_map: If True, update our _resel_map of classes
+        :type resel_map: bool
+        :param image: If True, update our RGB _image
+        :type image: bool
         """
-        # Update the values  in resel map and in the image
-        # Use case: You ran iterate() and want to see the new image.
-        if resel_map or image: # Only loop if we want to update something!
+        # Only loop if we have something we want to update!
+        if resel_map or update_image:
             for oncolor, offcolor, wires in ((pR, pr, self._red_wires), (pB, pb, self._blue_wires)):
+                # "oncolor" refers to 'saturated red' and 'saturated blue'
+                # "offcolor" refers to 'dark red' and 'dark blue'
+                # and 'wires' are the list of all wires that we have
                 for wire in wires:
-                    color = oncolor if wire.state else offcolor # Color to set the wire to
+                    # Get the RGB color (color_tuple) the set the pixel to
+                    color = oncolor if wire.state else offcolor
                     color_tuple = np.array(self.resel_to_rgb[color])
+                    # Get every pixel in the region
+                    # (RegionMapper.regions(regionid)[1] is the list of pixels)
                     regionid = wire.regionid
                     pixel_list = self._RM.regions(regionid)[1]
+                    
                     for ii, jj in pixel_list:
                         if resel_map:
+                            # 'color' is one of pR, pr, pB, pb
                             self._resel_map[ii,jj] = color
-                        if image:
+                        if update_image:
+                            # 'color_tuple' is the RGB tuple
                             self._image[ii,jj] = color_tuple
                 
     
     def get_resel_map(self):
-        """TODO
+        """Return the Numpy array representing the Reso board
         
-        :returns:
-        :rtype:
+        :returns: The [w,h] Numpy array representing the Reso board
+        :rtype: numpy.ndarray
         """
-        # Return a Numpy array representing the Reso board
+        # 
         return self._resel_map
     
     def get_image(self):
-        """TODO
+        """Return the Numpy array containing the underlying image.
         
-        :returns:
-        :rtype:
+        :returns: The [w,h,3] Numpy array containing the underlying image.
+        :rtype: numpy.ndarray
         """
-        # Return the Numpy array containing the underlying image.
-        # (Note: You may want to use np.swapaxes(_image, 0, 1))
-        #   (It may be better to just do that here...)
         return self._image
     
     def iterate(self, update_resels = True, update_image = True):
-        """TODO
-        :param update_resels:
-        :type update_resels:
-        :param update_image:
-        :type update_image:
+        """Iterate the board, updating every Wire() object.
+        This is the 'main logic' of updating a Reso circuit.
         
-        :returns:
-        :rtype:
+        Also updates the resels if update_resels is True,
+        and also updates the image if update_image is True
+        
+        Short description of the steps:
+        1. Push wire values through input nodes to logic nodes!
+        2. Push logic nodes values through to output nodes!
+        3. Push output nodes values to wires!
+        
+        Longer description:
+        1. Every logic node stores an internal boolean value which is updated
+           according to the values of wires of adjacent input nodes.
+           Output nodes are updated as if they were logical 'or' nodes.
+           ('xor' starts at False, and is flipped for each 'True' input.)
+           ('and' starts at False, is flipped 'True' if any 'True' inputs are
+            seen, and is permanently set to -1 (for 'False') if any 'False'
+            inputs are seen.)
+           ('output' nodes connected to an input node starts at False, and are
+            updated to True if any 'True' inputs are seen. I.e. an 'or')
+        2. Every logic node pushes their value to adjacent output nodes. This is
+           done as a logical 'or', i.e. if any adjacent logic nodes have a
+           'True' value, then the output node is set true!
+        3. Every output node then pushes its logical value to wires, using a
+           logical 'or' just as in step 2.
+                
+        :param resel_map: If True, update our _resel_map of classes
+        :type resel_map: bool
+        :param image: If True, update our RGB _image
+        :type image: bool
         """
-        # Iterate the board, updating every Wire() object.
-            # Also updates the resels if update_resels, and the image if update_image
         
-        # For each wire,
+        # Update all the 'input' nodes connected to wires
+        # and then update every connected logic node ('xor', 'and')
         for wire in (self._red_wires + self._blue_wires):
             # For each input connected to that wire,
             for inputnode in self._adj_inputs[wire.regionid]:
                 # Update the internal states of adjacent xor, and, outputs
                 for xornode in self._adj_xors[inputnode.regionid]:
                     xornode.state = xornode.state ^ wire.state
+                
                 for andnode in self._adj_ands[inputnode.regionid]:
                     if not (andnode.state == -1):
                         if wire.state == False:
@@ -301,23 +334,27 @@ class ResoBoard:
                 for outnode in self._adj_outputs[inputnode.regionid]:
                     outnode.state = outnode.state or wire.state
         
-        # For each logical element,
+        # For each 'xor' logical element,
+        # update the state of connected output nodes
         for xornode in self._xors:
             for outnode in self._adj_outputs[xornode.regionid]:
                 outnode.state = outnode.state or xornode.state
         
+        # For each 'and' logical element,
+        # update the state of connected output nodes
         for andnode in self._ands:
             if andnode.state == True:
                 for outnode in self._adj_outputs[andnode.regionid]:
                     outnode.state = outnode.state or andnode.state
         
-        # For each output,
+        # For each output node, update the state of connected wires.
         for outnode in self._outputs:
             # Update the next_state of each adjacent wire
             for wire in self._adj_wires[outnode.regionid]:
                  wire.next_state = wire.next_state or outnode.state
         
-        # Finally, reset everything
+        # Finally, reset the states of every wire.
+        # We used 'next_state' just as a placeholder during iteration
         for wire in (self._red_wires + self._blue_wires):
             wire.state = wire.next_state
             wire.next_state = False
