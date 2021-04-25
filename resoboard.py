@@ -1,5 +1,6 @@
-from PIL import Image
 import numpy as np
+from PIL import Image
+
 from regionmapper import ortho_map, diag_map, RegionMapper
 from palette import pR, pY, pG, pC, pB, pM
 from palette import pr, py, pg, pc, pb, pm
@@ -8,50 +9,53 @@ from palette import po, pl, pt, ps, pp, pv
 from palette import get, resel_to_rgb, rgb_to_resel
 
 
-# TODO: https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html
-
-#### Wire and Node classes used below to hold data about the state during iteration
+# Wire and Node classes used below to hold data about the state during iteration
 class Wire:
-    """TODO
+    """ A class representing a wire. It can be on or off (controlled by 'state'),
+    and extra information is stored in 'next_state' during
     
+    (This could be a dataclass! But I want to be backwards-compatible.)
     
-    
-    :param regionid:
-    :type regionid:
-    :param state:
-    :type state:
-    :param next_state:
-    :type next_state:
+    :param regionid: The integer representing the unique ID of the region that
+        is this wire.
+    :type regionid: Int
+    :param state: Corresponds to the visually outward state of the wire
+    :type state: Bool or Int
+    :param next_state: Used only to calculate updates, and remains False between
+        iterations.
+    :type next_state: Bool or Int
     """
     def __init__(self, regionid, state = False, next_state = False):
         self.regionid = regionid
         self.state = state
         self.next_state = next_state
-        # State corresponds to the visual state of the wire between iterations
-        # next_state is used only during iteration and remains false
 
-# todo: consider making this a dataclass?
+
 class Node:
-    """TODO
+    """Representing all other nodes, which are static and hold no other info.
     
-    :param regionid:
-    :type regionid:
-    :param state:
-    :type state:
+    (This could be a dataclass! But I want to be backwards-compatible.)
+    
+    :param regionid: The integer representing the unique ID of the region that
+        is this wire.
+    :type regionid: Int
+    :param state: CUsed only to calculate updates, and remains False between
+        iterations.
+    :type state: Bool or Int
     """
     # Node is everything that is not a wire
     def __init__(self, regionid, state = False):
         self.regionid = regionid
         self.state = state # Remains false between iterations
         # For 'and' nodes, state starts at False,
-        # locks to -1 if connected to an off wire.
+        # and state locks to -1 if connected to an off wire.
 
 
 class ResoBoard:
     """TODO
     
-    :param image:
-    :type image:
+    :param image: Numpy array of shape (w, h, 3) representing the RGB image.
+    :type image: numpy.ndarray
     :param resel_to_rgb:
     :type resel_to_rgb:
     :param rgb_to_resel:
