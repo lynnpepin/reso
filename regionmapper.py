@@ -101,7 +101,7 @@ def _value_to_class(class_dict, value):
     # E.g. if the shape of the array = (), e.g. np.array(12345)
     elif len(value.shape) == 0:
         if value in class_dict.keys():
-            return class_dict[a.reshape(-1)[0]]
+            return class_dict[value]
         else:
             return 0
     else:
