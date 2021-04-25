@@ -3,6 +3,10 @@ import numpy as np
 from regionmapper import ortho_map, diag_map, RegionMapper
 
 # todo: clean these up
+
+# Palette stuff below
+# 
+
 #### Palette stuff: RGB <--> 'resel' conversion
 # Enumerations for each of the colors!
 # Numbers are arbitrary, but note: 0 implicitly means 'blank'; do not use, and numbers must be unique.
@@ -55,6 +59,8 @@ def _get(d, k, default=0):
 #### Wire and Node classes used below to hold data about the state during iteration
 class Wire:
     """TODO
+    
+    
     
     :param regionid:
     :type regionid:
