@@ -117,38 +117,6 @@ Specifically, we consider pixels to represent logical "resels" which can also be
 **Port to a faster language:** Porting this to a faster language would be great. I think Rust would be fun (both because I want to learn it, and because there's some "Web Assembly" thing that makes me think it's easier to put Rust in the web than, say, C or C++.) 
 
 
-## Architecture
-
-I want to make a proper `ARCHITECTURE.md` eventually for this. :) But for now, check this section out.
-
-```
-.
-├── doc
-│       Contains a (WIP) whitepaper meant to describe this more formally.
-│
-├── README.md
-├── regionmapper.py
-│       A tool that is used to map adjacent elements in a 2D array to a graph
-│       described as a dict. Used to map contiguous regions of pixels in a Reso
-│       program to nodes in a graph, and vice-versa.
-├── resoboard.py
-│       Implements Reso as a "board". Example usage:
-│           `board = ResoBoard(image); board.iterate(); img = board.get_image()`
-│       Should be updated to use Pythonic Enums, proper docstrings, etc, but
-│       the documentation is there!
-│
-│       The class ResoBoard does the heavy lifting here. If you want to use this
-│       in another program, resoboard.ResoBoard is what you want to import.
-│
-├── reso.py
-│       Provides command-line access to Reso.
-├── testing
-│       Contains images used in tests.py
-└── tests.py
-        Contains unit tests for this program
-
-```
-
 ## See Also
 
 Here are a list of similar projects that I am aware of. Please make an issue or PR if you have something else to share!
