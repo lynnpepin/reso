@@ -1,7 +1,23 @@
 # Reso
-![Reso logo](https://github.com/tpepin96/reso/blob/master/reso_logo.gif)
+![Reso logo](./reso_logo.gif)
 
-Reso is a graphical digital logic design language, inspired by Redstone and Wireworld. Made for fun and education, written using Python3.
+Reso is a low-level circuit design language and simulator, inspired by projects like Redstone, Conway's Game of Life, and Wireworld.
+
+**What is Reso?**
+
+ * Reso is a digital logic circuit graphical programming language!
+ * Reso is a digital logic circuit simulator.
+ * Reso program outputs other Reso programs.
+ * Reso is *not* a cellular automata, despite similarities.
+ * Reso is *not* useful or good yet, but I hope you can still have fun with it.
+
+An input program is a circuit described by a (bitmap) image. When a Reso program is ran through the Reso simulator, it outputs another valid Reso program! Things get interesting when you iterate this process.
+
+While the simulator acts like a pure function, for performance reasons, it maintains state between iterations.
+
+Because images are valid circuits, you can copy-and-paste smaller components to build up more complex circuits using your favorite image editor!
+
+This implementation is (1) slow (it's in Python!) and (2) not-interactive (you can't edit circuits live!) I hope you can have fun with this despite those limitations. :)
 
 ## Usage
 
@@ -9,7 +25,8 @@ This implementation of Reso supports command line usage. Input is a single image
 
 ### Command line
 
-Here's an example: Load ~/helloworld.png, iterate 12 times, and save the results to ~/hello_xx.png. "-v" means "Verbose".
+Here's an example: Load `~/helloworld.png`, *iterate* (`-i`) 12 times, and *save* (`-s`) the results to `~/hello_00.png`, `~/hello_01.png`, ... `~/hello_04.png`, printing information *verbosely* (`-v`) along the way:
+
 
 ```
 python3 reso.py ~/helloworld.png -i 12 -s hello_ -v
@@ -21,7 +38,7 @@ If you only wanted to save the end result, add the "-o" flag, as such:
 python3 reso.py ~/helloworld.png -i 12 -s hello_ -v -o
 ```
 
-Full CLI usage:
+And here is the full command-line usage:
 
 ```
 usage: reso.py load_location [--iterate ITERATE] [--save SAVE] [--outputlast] [--verbose]    
@@ -40,9 +57,8 @@ other arguments:
 
 ### Palette
 
-Reso programs are RGB images defined by pixels of different colors. Different hues have different functional meanings.
+The palette is an important part of Reso! You can define a circuit using an image. Any pixel with a color in this palette of eight colors has semantic meaning, any other color doesn't.
 
-There are currently 48 reserved colors (12 hues of 4 shades each). Of these, only 4 hues with 2 shades each have syntactic meaning:
 
 | Color          | Meaning               | Hex code       |
 | ---            | ---                   | ---            |
@@ -55,39 +71,62 @@ There are currently 48 reserved colors (12 hues of 4 shades each). Of these, onl
 | Bright cyan    | XOR logic node        | ```#00ffff```  |
 | Dark cyan      | AND logic node        | ```#008080```  |
 
-**Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires.
+For backwards compatibility with new functionality, we reserve a total of 48 colors. (This is by convention and is not enforced by the Reso simulator.)
 
-Black and white (#000 and #fff, respectively) are the only safe 'whitespace' colors. These will never have any semantic meaning. Any other color may be reserved at any time.
+*A brief description of how programs run:* **Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires.
 
-Each f, 8, 4, and 0 corresponds to hex 0xff, 0x80, 0x40, and 0x00, respectively.
+Black and white (`#000` and `#fff`, respectively) are the only safe 'whitespace' colors. These will never have any semantic meaning. Any other color may be reserved at any time.
 
-Here is the full list of currently reserved colors. Of these, only R1, R2, C1, C2, B1, B2, and M1 and M2 are in use.
+Here's the full palette of colors that we consider "reserved".
 
-| Hue             | Saturated (1)    | Dark (2)  | Light (3)     | Unsaturated (4)   |
-| ---             | ---              | ---       | ---           | ---               |
-| **Red (R)**     | ```#f00```       | ```#800```| ```#f88```    | ```#844```        |
-| **Yellow (Y)**  | ```#ff0```       | ```#880```| ```#ff8```    | ```#884```        |
-| **Green (G)**   | ```#0f0```       | ```#080```| ```#8f8```    | ```#484```        |
-| **Cyan (C)**    | ```#0ff```       | ```#088```| ```#8ff```    | ```#488```        |
-| **Blue (B)**    | ```#00f```       | ```#008```| ```#88f```    | ```#448```        |
-| **Magenta (M)** | ```#f0f```       | ```#808```| ```#f8f```    | ```#848```        |
-| **Orange (O)**    | ```#f80```       | ```#840```| ```#fc8```    | ```#864```        |
-| **Lime (L)**      | ```#8f0```       | ```#480```| ```#cf8```    | ```#684```        |
-| **Teal (T)**      | ```#0f8```       | ```#084```| ```#8fc```    | ```#486```        |
-| **Sapphire (S)**  | ```#08f```       | ```#048```| ```#8cf```    | ```#468```        |
-| **Purple (P)**    | ```#80f```       | ```#408```| ```#c8f```    | ```#648```        |
-| **Violet (V)**    | ```#f08```       | ```#804```| ```#f8c```    | ```#846```        |
+| **Red (R)**       | ```#ff0000```       | ```#800000```| ```#ff8080```    | ```#804040```       |
+| **Yellow (Y)**    | ```#ffff00```       | ```#808000```| ```#ffff80```    | ```#808040```       |
+| **Green (G)**     | ```#00ff00```       | ```#008000```| ```#80ff80```    | ```#408040```       |
+| **Cyan (C)**      | ```#00ffff```       | ```#008080```| ```#80ffff```    | ```#408080```       |
+| **Blue (B)**      | ```#0000ff```       | ```#000080```| ```#8080ff```    | ```#404080```       |
+| **Magenta (M)**   | ```#ff00ff```       | ```#800080```| ```#ff80ff```    | ```#804080```       |
+| **Orange (O)**    | ```#ff8000```       | ```#804000```| ```#ffc080```    | ```#806040```       |
+| **Lime (L)**      | ```#80ff00```       | ```#408000```| ```#c0ff80```    | ```#608040```       |
+| **Teal (T)**      | ```#00ff80```       | ```#008040```| ```#80ffc0```    | ```#408060```       |
+| **Sapphire (S)**  | ```#0080ff```       | ```#004080```| ```#80c0ff```    | ```#406080```       |
+| **Purple (P)**    | ```#8000ff```       | ```#400080```| ```#c080ff```    | ```#604080```       |
+| **Violet (V)**    | ```#ff0080```       | ```#800040```| ```#ff80c0```    | ```#804060```       |
+
+(Note: Don't sample directly from your web-browser! They don't always render colors reliably.)
 
 ## Examples
 
-![This is Reso gif](https://github.com/tpepin96/reso/blob/master/examples/this_is_reso.gif)
-
-More examples to come!
+![This is Reso gif](./examples/this_is_reso.gif)
 
 ## Things to be done:
 
-Reso is very new. While Turing-complete, I might add some functionality in the reserved-colors someday. E.g. It'd be cool if the (currently unused) yellow-color could interact with, say, GPIO pins.
+Despite all the tests and documentation, Reso is a proof-of-concept and there's a lot to be done before this could even be a little useful!
 
-Being such a visual language, an MS-Paint-esque IDE of sorts would be a cool and fun project!
+Here are some neat ideas:
 
-Finally, being colorblind would probably make using Reso more difficult. Customizable pallets could help alleviate that, and it shouldn't be too hard for me to implement.
+**Transferrable compiled graphs:** Reso is really a graph computation model of a logical circuit, and images are a way to define that graph. I want to better decouple that model, and make this a repository a better reference implementation.
+
+Specifically, we consider pixels to represent logical "resels" which can also be represented textually, and regions of resels represent elements, which are represented internally as a graph implemented with Python dictionaries. But this graph isn't a standard, so a compiled graph can't be transferred between implementations.
+
+**GUI and interactivity:** Some kind of GUI would be nifty too, rather than requiring expertise in some external graphical application. An interactive, Javascript webpage would make this a lot easier to mess around with, huh?
+
+**Speed:** This is also really slow. Might reimplement in Rust when I get around to learning it!
+
+**Palette:** The first six hues (Red, Yellow, Green, Cyan, Blue, Magenta) have roughly unequal brightness values while the second six hues (Orange, Lime, Teal, Sapphire, Purple, Violet) are more appealingly equal. I want to change the palette to use these latter halves, with wires represented by Orange and Sapphire, logic represented by Teal, and inputs represented by Violet.
+
+**Port to a faster language:** Porting this to a faster language would be great. I think Rust would be fun (both because I want to learn it, and because there's some "Web Assembly" thing that makes me think it's easier to put Rust in the web than, say, C or C++.) 
+
+
+## See Also
+
+Here are a list of similar projects that I am aware of. Please make an issue or PR if you have something else to share!
+
+ * Several sandbox videogames which have turing-complete circuit languages that empower the player to automate their world:
+    * Minecraft's *Redstone* was the primary inspiration for this.
+    * Terraria (Minecraft's 2D analogue) has a similar logic-gate wiring mechanism.
+    * Hempuli is one of my favorite game devs, and seeing their development on [Baba Is You](https://en.wikipedia.org/wiki/Baba_Is_You) kept my brain on the right track for this.
+    * Various other open-world sandbox games: Factorio, No Man's Sky, Dwarf Fortress, and others!
+ * [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) -- A Turing-complete zero-player-game. By far the most popular cellular automata. Rest in Peace John Conway.
+ * [Wireworld](https://en.wikipedia.org/wiki/Wireworld) -- Another cellular automata in which it is easy to implement logic circuits.
+ * [Brian's Brain](https://en.wikipedia.org/wiki/Brian%27s_Brain) -- A cellular automaton similar to the previous.
+ * [Bitmap Logic Simulator] -- I'm not sure how this works, but check it out.

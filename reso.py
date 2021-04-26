@@ -5,39 +5,56 @@ from math import log, ceil
 import numpy as np
 
 
-def main(load_filename,
-         save_prefix,
-         iterations = 1,
-         save_each_iteration = True,
-         V = False):
-    """
-    load_filename: String; location from which to load the image from
-    save_prefix:   String; location to save the file to.
-    iterations:    Int, number of times to update the circuit.
-    save_each_iteration: Bool; if true, save an image of the circuit each iteration.
-    V: Bool; verbosity.
+def main(
+    load_filename,
+    save_prefix,
+    iterations = 1,
+    save_each_iteration = True,
+    V = False):
+    """Wraps the logic in 'resoboard' for simulating, exporting, etc.
+    
+    Used in the actual '__main__' of this function, with parameters passed from
+    argparser.
+    
+    :param load_filename: location from which to load the image from
+    :type load_filename: String
+    :param save_prefix: location to save the file to.
+    :type save_prefix: String
+    :param iterations: Number of simulation steps to update the circuit.
+    :type iterations: Int
+    :param save_each_iteration: If true, save an image of the circuit each iteration.
+    :type save_each_iteration: Bool
+    :param V: If True, print verbose output while running
+    :type V: Bool
     """
     
-    
+    # See this ugly variable here?
+    # This is why Python gave us fstrings.
+    # todo: Use fstring magic and see if things still print right.
     num_digits_in_fname = ceil(log(iterations+.1,10))
     
     if V:
         print("  Loading", load_filename,"and iterating",iterations,"time(s),")
         print("  and then saving to ",save_prefix,'x'*num_digits_in_fname,".png",sep='')
     
-    
+    # Instantiate our ResoBoard
     RB = ResoBoard(load_filename)
     
+    if V:
+        print("... Compiled! Iterating now.")
+    
+    # Simulation!
     for ii in range(iterations):
         if save_each_iteration:
             save_loc = save_prefix + str(ii).zfill(num_digits_in_fname) + ".png"
             Image.fromarray(np.swapaxes(RB.get_image(),0,1)).save(save_loc)
         if V:
             print("Iteration: ",ii)
+        # update_image is true if we're on our last iteration.
         update_image = save_each_iteration or ii == iterations - 1
         RB.iterate(update_resels = False, update_image = update_image )
     
-    # Last iteration, always printed
+    # Last iteration, always saved
     if V:
         print("Iteration: ", iterations)
     save_loc = save_prefix + str(iterations).zfill(num_digits_in_fname) + ".png"
