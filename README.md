@@ -1,9 +1,17 @@
 # Reso
 ![Reso logo](https://gitlab.com/lynnpepin/reso/-/raw/master/reso_logo.gif)
 
-Reso is a low-level circuit design language and simulator, inspired by Redstone and Wireworld.
+Reso is a low-level circuit design language and simulator, inspired by projects like Redstone, Conway's Game of Life, and Wireworld.
 
-An input program is a circuit (perhaps described using an image). When a Reso program is ran through the Reso simulator, it outputs another valid Reso program! Things get interesting when you iterate this process.
+**What is Reso?**
+
+ * Reso is a digital logic circuit graphical programming language!
+ * Reso is a digital logic circuit simulator.
+ * Reso program outputs other Reso programs.
+ * Reso is *not* a cellular automata, despite similarities.
+ * Reso is *not* useful or good yet, but I hope you can still have fun with it.
+
+An input program is a circuit described by a (bitmap) image. When a Reso program is ran through the Reso simulator, it outputs another valid Reso program! Things get interesting when you iterate this process.
 
 While the simulator acts like a pure function, for performance reasons, it maintains state between iterations.
 
@@ -65,11 +73,11 @@ The palette is an important part of Reso! You can define a circuit using an imag
 
 For backwards compatibility with new functionality, we reserve a total of 48 colors. (This is by convention and is not enforced by the Reso simulator.)
 
-**Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires.
+*A brief description of how programs run:* **Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires.
 
 Black and white (`#000` and `#fff`, respectively) are the only safe 'whitespace' colors. These will never have any semantic meaning. Any other color may be reserved at any time.
 
-Here's that full palette:
+Here's the full palette of colors that we consider "reserved".
 
 | **Red (R)**       | ```#ff0000```       | ```#800000```| ```#ff8080```    | ```#804040```       |
 | **Yellow (Y)**    | ```#ffff00```       | ```#808000```| ```#ffff80```    | ```#808040```       |
@@ -92,6 +100,10 @@ Here's that full palette:
 
 ## Things to be done:
 
+Despite all the tests and documentation, Reso is a proof-of-concept and there's a lot to be done before this could even be a little useful!
+
+Here are some neat ideas:
+
 **Transferrable compiled graphs:** Reso is really a graph computation model of a logical circuit, and images are a way to define that graph. I want to better decouple that model, and make this a repository a better reference implementation.
 
 Specifically, we consider pixels to represent logical "resels" which can also be represented textually, and regions of resels represent elements, which are represented internally as a graph implemented with Python dictionaries. But this graph isn't a standard, so a compiled graph can't be transferred between implementations.
@@ -101,6 +113,8 @@ Specifically, we consider pixels to represent logical "resels" which can also be
 **Speed:** This is also really slow. Might reimplement in Rust when I get around to learning it!
 
 **Palette:** The first six hues (Red, Yellow, Green, Cyan, Blue, Magenta) have roughly unequal brightness values while the second six hues (Orange, Lime, Teal, Sapphire, Purple, Violet) are more appealingly equal. I want to change the palette to use these latter halves, with wires represented by Orange and Sapphire, logic represented by Teal, and inputs represented by Violet.
+
+**Port to a faster language:** Porting this to a faster language would be great. I think Rust would be fun (both because I want to learn it, and because there's some "Web Assembly" thing that makes me think it's easier to put Rust in the web than, say, C or C++.) 
 
 
 ## Architecture
@@ -134,3 +148,17 @@ I want to make a proper `ARCHITECTURE.md` eventually for this. :) But for now, c
         Contains unit tests for this program
 
 ```
+
+## See Also
+
+Here are a list of similar projects that I am aware of. Please make an issue or PR if you have something else to share!
+
+ * Several sandbox videogames which have turing-complete circuit languages that empower the player to automate their world:
+    * Minecraft's *Redstone* was the primary inspiration for this.
+    * Terraria (Minecraft's 2D analogue) has a similar logic-gate wiring mechanism.
+    * Hempuli is one of my favorite game devs, and seeing their development on [Baba Is You](https://en.wikipedia.org/wiki/Baba_Is_You) kept my brain on the right track for this.
+    * Various other open-world sandbox games: Factorio, No Man's Sky, Dwarf Fortress, and others!
+ * [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) -- A Turing-complete zero-player-game. By far the most popular cellular automata. Rest in Peace John Conway.
+ * [Wireworld](https://en.wikipedia.org/wiki/Wireworld) -- Another cellular automata in which it is easy to implement logic circuits.
+ * [Brian's Brain](https://en.wikipedia.org/wiki/Brian%27s_Brain) -- A cellular automaton similar to the previous.
+ * [Bitmap Logic Simulator] -- I'm not sure how this works, but check it out.
