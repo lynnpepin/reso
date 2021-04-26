@@ -79,6 +79,8 @@ Black and white (`#000` and `#fff`, respectively) are the only safe 'whitespace'
 
 Here's the full palette of colors that we consider "reserved".
 
+||||||
+|-|-|-|-|-|-
 | **Red (R)**       | ```#ff0000```       | ```#800000```| ```#ff8080```    | ```#804040```       |
 | **Yellow (Y)**    | ```#ffff00```       | ```#808000```| ```#ffff80```    | ```#808040```       |
 | **Green (G)**     | ```#00ff00```       | ```#008000```| ```#80ff80```    | ```#408040```       |
@@ -129,4 +131,4 @@ Here are a list of similar projects that I am aware of. Please make an issue or 
  * [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) -- A Turing-complete zero-player-game. By far the most popular cellular automata. Rest in Peace John Conway.
  * [Wireworld](https://en.wikipedia.org/wiki/Wireworld) -- Another cellular automata in which it is easy to implement logic circuits.
  * [Brian's Brain](https://en.wikipedia.org/wiki/Brian%27s_Brain) -- A cellular automaton similar to the previous.
- * [Bitmap Logic Simulator] -- I'm not sure how this works, but check it out.
+ * [Bitmap Logic Simulator](https://realhet.wordpress.com/2015/09/02/bitmap-logic-simulator/) -- I'm not sure how this works, but check it out! It's a similar idea.
