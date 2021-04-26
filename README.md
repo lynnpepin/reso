@@ -1,5 +1,5 @@
 # Reso
-![Reso logo](https://gitlab.com/lynnpepin/reso/-/raw/master/reso_logo.gif)
+![Reso logo](./reso_logo.gif)
 
 Reso is a low-level circuit design language and simulator, inspired by projects like Redstone, Conway's Game of Life, and Wireworld.
 
@@ -96,7 +96,7 @@ Here's the full palette of colors that we consider "reserved".
 
 ## Examples
 
-![This is Reso gif](https://github.com/tpepin96/reso/blob/master/examples/this_is_reso.gif)
+![This is Reso gif](./examples/this_is_reso.gif)
 
 ## Things to be done:
 
