@@ -209,9 +209,9 @@ class ResoBoard:
                 new_object = Wire(regionid)
                 if classid == pO:
                     self._orange_wires.append(new_object)
-                elif classid = pS:
+                elif classid == pS:
                     self._sapphire_wires.append(new_object)
-                elif classid = pL:
+                elif classid == pL:
                     self._lime_wires.append(new_object)
                 else:
                     raise ValueError('Check wire mapping loop. This shouldn\'t be possible to see!')
@@ -274,7 +274,7 @@ class ResoBoard:
         # For every region in _orange_wires, create an entry in self._adj_xors[region]
         # for every *adjacent* region having a class in classids
         for from_list, to_dict, classids in \
-            [((self._orange_wires + self._sapphire_wires self._lime_wires),
+            [((self._orange_wires + self._sapphire_wires + self._lime_wires),
               self._adj_inputs, (pp,)),
              (self._inputs, self._adj_xors, (pT,)),
              (self._inputs, self._adj_ands, (pt,)),
@@ -310,11 +310,11 @@ class ResoBoard:
         """
         # Only loop if we have something we want to update!
         if resel_map or update_image:
-            for oncolor, offcolor, wires in 
-                ((pO, po, self._orange_wires),
-                 (pS, ps, self._sapphire_wires),
-                 (pL, pl, self._lime_wires)
-                ):
+            for oncolor, offcolor, wires in (
+                (pO, po, self._orange_wires),
+                (pS, ps, self._sapphire_wires),
+                (pL, pl, self._lime_wires)
+            ):
                 # "oncolor" refers to 'saturated red' and 'saturated blue'
                 # "offcolor" refers to 'dark red' and 'dark blue'
                 # and 'wires' are the list of all wires that we have

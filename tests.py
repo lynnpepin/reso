@@ -1,7 +1,13 @@
 from PIL import Image
 import unittest as ut
 import numpy as np
-from resoboard import pR, pr, pY, py, pG, pg, pC, pc, pB, pb, pM, pm, rgb_to_resel, resel_to_rgb, ResoBoard
+
+from palette import pR, pY, pG, pC, pB, pM
+from palette import pr, py, pg, pc, pb, pm
+from palette import pO, pL, pT, pS, pP, pV
+from palette import po, pl, pt, ps, pp, pv
+from palette import get, resel_to_rgb, rgb_to_resel
+from resoboard import ResoBoard
 
 class DefaultPaletteTests(ut.TestCase):
     def setUp(self):
@@ -46,7 +52,7 @@ class ResoBoardInitTest(ut.TestCase):
         self.assertEqual(RB._resel_map[2,4], pr)
 
     def test_resel_map_on_new_colors(self):
-        RB = ResoBoard("test_01_new-palette.png")
+        RB = ResoBoard("testing/test_01_new-palette.png")
         # R -> O
         # G -> L
         # M -> P
@@ -70,19 +76,12 @@ class ResoBoardInitTest(ut.TestCase):
         self.assertEqual(RB._resel_map[0,4], pO)
         self.assertEqual(RB._resel_map[1,4], 0)
         self.assertEqual(RB._resel_map[2,4], po)
-
-    def test_region_map(self):
-        RB = ResoBoard("testing/test_02.png")
-        self.assertEqual(len(RB._RM._regions), 12)
-        self.assertEqual(len(RB._RM.regions_with_class(pR)), 2)
-        self.assertEqual(len(RB._RM.regions_with_class(pB)), 2)
-        self.assertEqual(len(RB._RM.adjacent_regions(RB._RM.region_at_pixel(4,3))), 2)
         
     def test_region_map_on_new_colors(self):
         RB = ResoBoard("testing/test_02_new-palette.png")
         self.assertEqual(len(RB._RM._regions), 12)
-        self.assertEqual(len(RB._RM.regions_with_class(pR)), 2)
-        self.assertEqual(len(RB._RM.regions_with_class(pB)), 2)
+        self.assertEqual(len(RB._RM.regions_with_class(pO)), 2)
+        self.assertEqual(len(RB._RM.regions_with_class(pS)), 2)
         self.assertEqual(len(RB._RM.adjacent_regions(RB._RM.region_at_pixel(4,3))), 2)
         
     # todo - from here down
@@ -96,7 +95,7 @@ class ResoBoardInitTest(ut.TestCase):
         self.assertEqual(len(RB._ands), 0)
 
     def test_wires(self):
-        RB = ResoBoard("testing/test_02.png")
+        RB = ResoBoard("testing/test_02_new-palette.png")
         # TODO: Need to reimplement so RB has _orange, _sapphire, _lime wires.
         self.assertEqual(len(RB._orange_wires),  2)
         self.assertEqual(len(RB._sapphire_wires), 2)
@@ -108,7 +107,7 @@ class ResoBoardInitTest(ut.TestCase):
     # TODO: New tests that include lime wires
     
     def test_adjs(self):
-        RB = ResoBoard("testing/test_02.png")
+        RB = ResoBoard("testing/test_02_new-palette.png")
         # The four wires
         longOwire = RB._RM.region_at_pixel(3,3)
         longSwire = RB._RM.region_at_pixel(2,7)
@@ -153,7 +152,7 @@ class ResoBoardInitTest(ut.TestCase):
         # TODO: Tests for xors and ands; Tests for elements with multiple adjacent nodes
     
     def test_reference(self):
-        RB = ResoBoard("testing/test_02.png")
+        RB = ResoBoard("testing/test_02_new-palette.png")
         # Make sure _resel_objects and, say, self._red_wires point to the same object
         regionid = RB._orange_wires[0].regionid
         starting_state = RB._orange_wires[0].state
@@ -163,7 +162,7 @@ class ResoBoardInitTest(ut.TestCase):
 
     def test_sanity_01(self):
         # Make sure a number of the new functions run:
-        RB = ResoBoard("testing/test_02.png")
+        RB = ResoBoard("testing/test_02_new-palette.png")
         RB._update()
 
     def test_update(self):
@@ -192,8 +191,8 @@ class ResoBoardInitTest(ut.TestCase):
         # Test a simple clock
         # Should swap back and forth...
         RB = ResoBoard("testing/test_02_new-palette.png")
-        im1 = np.swapaxes(Image.open("testing/test_02.png"),0,1)
-        im2 = np.swapaxes(Image.open("testing/test_02_01.png"),0,1)[:,:,:3]
+        im1 = np.swapaxes(Image.open("testing/test_02_new-palette.png"),0,1)
+        im2 = np.swapaxes(Image.open("testing/test_02_new-palette_1.png"),0,1)[:,:,:3]
         
         self.assertTrue(np.array_equal(im1, RB.get_image()))
         RB.iterate()
@@ -270,11 +269,13 @@ class ResoBoardInitTest(ut.TestCase):
         
         RB = ResoBoard(fn1)
         self.assertTrue(np.array_equal(im1, RB.get_image()))
-        RB.iterate()
         
+        RB.iterate()
         self.assertTrue(np.array_equal(im2, RB.get_image()))
+        
         RB.iterate()
         self.assertTrue(np.array_equal(im3, RB.get_image()))
+        
         RB.iterate()
         self.assertTrue(np.array_equal(im4, RB.get_image()))
 
