@@ -1,7 +1,7 @@
 # Reso
 ![Reso logo](./reso_logo.gif)
 
-Reso is a low-level circuit design language and simulator, inspired by projects like Redstone, Conway's Game of Life, and Wireworld.
+Reso is a low-level circuit design language and simulator, inspired by things like Redstone, Conway's Game of Life, and Wireworld.
 
 **What is Reso?**
 
@@ -62,22 +62,24 @@ The palette is an important part of Reso! You can define a circuit using an imag
 
 | Color          | Meaning               | Hex code       |
 | ---            | ---                   | ---            |
-| Bright red     | Red wire (on)         | ```#ff0000```  |
-| Dark red       | Red wire (off)        | ```#800000```  |
-| Bright blue    | Blue wire (on)        | ```#0000ff```  |
-| Dark blue      | Blue wire (off)       | ```#000080```  |
-| Bright magenta | Output (node to wire) | ```#ff00ff```  |
-| Dark magenta   | Input (wire to node)  | ```#800080```  |
-| Bright cyan    | XOR logic node        | ```#00ffff```  |
-| Dark cyan      | AND logic node        | ```#008080```  |
+| Bright orange  | Orange wire (on)      | ```#ff8000```  |
+| Dark  orange   | Orange wire (off)     | ```#804000```  |
+| Bright sapphire| Sapphire wire (on)    | ```#0080ff```  |
+| Dark sapphire  | Sapphire wire (off)   | ```#004080```  |
+| Bright lime    | Lime wire (on)        | ```#80ff00```  |
+| Dark lime      | Lime wire (off)       | ```#408000```  |
+| Bright purple  | Output (node to wire) | ```#8000ff```  |
+| Dark purple    | Input (wire to node)  | ```#400080```  |
+| Bright teal    | XOR logic node        | ```#00ff80```  |
+| Dark teal      | AND logic node        | ```#008040```  |
 
 For backwards compatibility with new functionality, we reserve a total of 48 colors. (This is by convention and is not enforced by the Reso simulator.)
 
-*A brief description of how programs run:* **Wires** push their signals through **input nodes**. Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires.
+*A brief description of how programs run:* **Wires** push their signals through **input nodes**. There are three different colors of wire (orange, sapphire, and lime). Input nodes pass these signals to **logic nodes** and **output nodes**. Logic nodes are used to calculate the 'AND' or 'XOR' of every input signal, and push these on to **output nodes**. The output nodes act as one big *OR* gate, pushing the new signals out to wires.
 
-Black and white (`#000` and `#fff`, respectively) are the only safe 'whitespace' colors. These will never have any semantic meaning. Any other color may be reserved at any time.
+The colors of different wires don't have any significance. They exist to make it easier to wire in 2D space, and to make it easier to keep track of which wire is which.
 
-Here's the full palette of colors that we consider "reserved".
+Here's the full palette of colors that we consider "reserved". Other colors are 'whitespace', i.e. will not have any semantic significance.
 
 | Hue               | Saturated (1) | Dark (2)      | Light (3)     | Unsaturated (4) |
 | ---               | ---           | ---           | ---           | ---           |
@@ -98,13 +100,20 @@ Here's the full palette of colors that we consider "reserved".
 
 ## Examples
 
-![This is Reso gif](./examples/this_is_reso.gif)
+The Reso logo is actually a complete circuit in-and-of itself! Here is a small gif that explains what's going on, animated at 1/4th the speed (that is, one update every 2000ms):
+
+![This is Reso gif](./examples/reso_logo_explained.gif)
 
 ## Things to be done:
 
 Despite all the tests and documentation, Reso is a proof-of-concept and there's a lot to be done before this could even be a little useful!
 
 Here are some neat ideas:
+
+**Flag to map to nearby colors:** I've been having a weird issue with some versions of The GIMP, where colors are saved or picked incorrectly. Reso requires precise colors (e.g. `#ff8000` is a valid color but `#ff8800` is not.) Perhaps a flag to consider only the ~4 or so most-significant-bits per pixel, or to map colors within a certain range to their nearest one in the palette, would be useful?
+
+
+**Export to GIF option:** Self explanatory! No more fiddling with GIMP or ffmpeg.
 
 **Transferrable compiled graphs:** Reso is really a graph computation model of a logical circuit, and images are a way to define that graph. I want to better decouple that model, and make this a repository a better reference implementation.
 
@@ -114,9 +123,9 @@ Specifically, we consider pixels to represent logical "resels" which can also be
 
 **Speed:** This is also really slow. Might reimplement in Rust when I get around to learning it!
 
-**Palette:** The first six hues (Red, Yellow, Green, Cyan, Blue, Magenta) have roughly unequal brightness values while the second six hues (Orange, Lime, Teal, Sapphire, Purple, Violet) are more appealingly equal. I want to change the palette to use these latter halves, with wires represented by Orange and Sapphire, logic represented by Teal, and inputs represented by Violet.
 
 **Port to a faster language:** Porting this to a faster language would be great. I think Rust would be fun (both because I want to learn it, and because there's some "Web Assembly" thing that makes me think it's easier to put Rust in the web than, say, C or C++.) 
+
 
 
 ## See Also
