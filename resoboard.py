@@ -97,9 +97,10 @@ class ResoBoard:
         'regions'.
     _resel_objects: List of Wire() or Node() objects, indexed by their unique
         region IDs.
-    _red_wires, _blue_wires, _inputs, _outputs, _ands, _xors:
-        Lists of Wire()/Node() objects, pointing to the same objects as in
-        _resel_objects.
+    _orange_wires, _sapphire_wires, _lime_wires
+        Lists of Wire() objects, pointing to the same objects as in _resel_objects
+     _inputs, _outputs, _ands, _xors:
+        Lists of Node() objects, pointing to the same objects as in _resel_objects.
     
     A bunch of adjacency dicts:
     These are indexed by region_id, mapping to a list of all adjacent elements
@@ -148,25 +149,28 @@ class ResoBoard:
         # First, we note that 'on' wires and 'off' wires **are the same class!**
         # So, for our regionmapper, we need them to map to the same class.
         class_dict = { 
-            pR : pR, pr : pR,    # pR is also used to denote red wires
-            pB : pB, pb : pB,    # pB is also used to denote blue wires
-            pG : pG, pg : pg,    # Every other color maps to itself
+            pO : pO, po : pO,    # pO is also used to denote orange wires
+            pS : pS, ps : pS,    # pS is also used to denote sapphire wires
+            pL : pL, pl : pL,    # pL is also used to denote lime wires
+            
+            pP : pP, pp : pp,   # Every other color maps to itself
+            pT : pT, pt : pt,
+            
+            pR : pR, pr : pr,
+            pG : pG, pg : pg,
+            pB : pB, pb : pb,
             pC : pC, pc : pc,
             pY : pY, py : py,
             pM : pM, pm : pm, 
-            pO : pO, po : po,
-            pL : pL, pl : pl,
-            pT : pT, pt : pt,
-            pS : pS, ps : ps,
-            pP : pP, pp : pp,
             pV : pV, pv : pv
         }
         
         # Wires are diagonally contiguous (to make it easier for them to 'cross')
         # while everything else is only orthogonally continuous
         contiguities = {
-            pR : ortho_map + diag_map,
-            pB : ortho_map + diag_map
+            pO : ortho_map + diag_map,
+            pS : ortho_map + diag_map,
+            pL : ortho_map + diag_map
         } # Wires are diagonally contiguous
         
         # Now we use our RegionMapper helper to identify all the distinct,
@@ -182,44 +186,49 @@ class ResoBoard:
         #   self._RM.adjacent_regions(region_id)
         
         # Now, we need to set up a Wire()/Node() object for each region.
-        # We need lists of all such objects (self._red_wires, etc...),
+        # We need lists of all such objects (self._orange_wires, etc...),
         # and the regionid -> Wire()/Node() list self._resel_objects.
         # This code is redundant in space, but we save time :)
         # (... todo: this can be cleaned up? We can just use
-        # self._RM.regions_with_class(PR), right? It'll be uglier but who cares?)
+        # self._RM.regions_with_class(pO), right? It'll be uglier but who cares?)
         
         self._resel_objects = [None]*len(self._RM._regions)
         # # One entry in self._resel_objects for each region we have.
-        self._red_wires     = []
-        self._blue_wires    = []
-        self._inputs        = []
-        self._outputs       = []
-        self._ands          = []
-        self._xors          = []
+        self._orange_wires   = []
+        self._sapphire_wires = []
+        self._lime_wires     = []
+        self._inputs         = []
+        self._outputs        = []
+        self._ands           = []
+        self._xors           = []
         
         # Now we loop over all our regions, and their associated class type.
         for regionid, (classid, _) in enumerate(self._RM._regions):
-            if classid == pR or classid == pB:
+            if classid == pO or classid == pS or classid == pL:
                 # Recall that off wires and on wires were both mapped to the same class.
                 new_object = Wire(regionid)
-                if classid == pR:
-                    self._red_wires.append(new_object)
+                if classid == pO:
+                    self._orange_wires.append(new_object)
+                elif classid == pS:
+                    self._sapphire_wires.append(new_object)
+                elif classid == pL:
+                    self._lime_wires.append(new_object)
                 else:
-                    self._blue_wires.append(new_object)
+                    raise ValueError('Check wire mapping loop. This shouldn\'t be possible to see!')
             else:
                 # It's not a wire, we have a node instead!
                 # We need to add it to the correct list of elements.
                 new_object = Node(regionid)
-                if classid == pm:
+                if classid == pp:
                     self._inputs.append(new_object)
-                elif classid == pM:
+                elif classid == pP:
                     self._outputs.append(new_object)
-                elif classid == pC:
-                    self._xors.append(new_object)
-                elif classid == pc:
+                elif classid == pt:
                     self._ands.append(new_object)
+                elif classid == pT:
+                    self._xors.append(new_object)
                 elif classid in (
-                    pG, pg, pY, py, pO, po, pL, pl, pT, pt, pS, ps, pP, pp, pV, pv
+                    pR, pr, pG, pg, pB, pb, pC, pc, pY, py, pM, pm, pV, pv
                 ):
                     # List of all reserved but not-yet-used colors
                     pass
@@ -227,7 +236,7 @@ class ResoBoard:
                     # This should never happen!
                     # Our region mapper should not have been able to get to this state...
                     print("Unrecognized classid", classid)
-                    raise ValueError
+                    raise ValueError('Somehow, we mapped a class outside the palette. Shouldn\'t be possible!')
             
             # We also want whatever object we create to be stored in our list
             # of all _resel_objects.
@@ -237,12 +246,12 @@ class ResoBoard:
         
         # region), then that whole wire should be considered on.
         # So, loop over every wire, and if any pixel is 'on', then turn it on!
-        for wires in (self._red_wires, self._blue_wires): 
+        for wires in (self._orange_wires, self._sapphire_wires, self._lime_wires): 
             for wire in wires:
                 wire_is_on = False
                 pixels_in_wire = self._RM.regions(wire.regionid)[1]
                 for ii, jj in pixels_in_wire:
-                    if self._resel_map[ii, jj] == pR or self._resel_map[ii,jj] == pB:
+                    if self._resel_map[ii, jj] in (pO, pS, pL):
                         wire_is_on = True
                         break
                 wire.state = wire_is_on
@@ -262,16 +271,17 @@ class ResoBoard:
         self._adj_wires     = dict()
 
         # Loop over the following:
-        # For every region in _red_wires, create an entry in self._adj_xors[region]
+        # For every region in _orange_wires, create an entry in self._adj_xors[region]
         # for every *adjacent* region having a class in classids
         for from_list, to_dict, classids in \
-            [((self._red_wires + self._blue_wires), self._adj_inputs, (pm,)),
-             (self._inputs, self._adj_xors, (pC,)),
-             (self._inputs, self._adj_ands, (pc,)),
-             (self._inputs, self._adj_outputs, (pM,)),
-             (self._xors, self._adj_outputs, (pM,)),
-             (self._ands, self._adj_outputs, (pM,)),
-             (self._outputs, self._adj_wires, (pR, pB))]:
+            [((self._orange_wires + self._sapphire_wires + self._lime_wires),
+              self._adj_inputs, (pp,)),
+             (self._inputs, self._adj_xors, (pT,)),
+             (self._inputs, self._adj_ands, (pt,)),
+             (self._inputs, self._adj_outputs, (pP,)),
+             (self._xors, self._adj_outputs, (pP,)),
+             (self._ands, self._adj_outputs, (pP,)),
+             (self._outputs, self._adj_wires, (pO, pS, pL))]:
              
              for resel in from_list:
                 to_dict[resel.regionid] = []
@@ -300,7 +310,11 @@ class ResoBoard:
         """
         # Only loop if we have something we want to update!
         if resel_map or update_image:
-            for oncolor, offcolor, wires in ((pR, pr, self._red_wires), (pB, pb, self._blue_wires)):
+            for oncolor, offcolor, wires in (
+                (pO, po, self._orange_wires),
+                (pS, ps, self._sapphire_wires),
+                (pL, pl, self._lime_wires)
+            ):
                 # "oncolor" refers to 'saturated red' and 'saturated blue'
                 # "offcolor" refers to 'dark red' and 'dark blue'
                 # and 'wires' are the list of all wires that we have
@@ -315,7 +329,7 @@ class ResoBoard:
                     
                     for ii, jj in pixel_list:
                         if resel_map:
-                            # 'color' is one of pR, pr, pB, pb
+                            # 'color' is one of pO, po, pS, ps, pL, pl
                             self._resel_map[ii,jj] = color
                         if update_image:
                             # 'color_tuple' is the RGB tuple
@@ -375,7 +389,7 @@ class ResoBoard:
         
         # Update all the 'input' nodes connected to wires
         # and then update every connected logic node ('xor', 'and')
-        for wire in (self._red_wires + self._blue_wires):
+        for wire in (self._orange_wires + self._sapphire_wires + self._lime_wires):
             # For each input connected to that wire,
             for inputnode in self._adj_inputs[wire.regionid]:
                 # Update the internal states of adjacent xor, and, outputs
@@ -412,7 +426,7 @@ class ResoBoard:
         
         # Finally, reset the states of every wire.
         # We used 'next_state' just as a placeholder during iteration
-        for wire in (self._red_wires + self._blue_wires):
+        for wire in (self._orange_wires + self._sapphire_wires + self._lime_wires):
             wire.state = wire.next_state
             wire.next_state = False
 

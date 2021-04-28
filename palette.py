@@ -50,7 +50,6 @@ pc = ord('c')   # 99    # AND node
 pM = ord('M')   # 77    # Output node (from input/logic node to wire)
 pm = ord('m')   # 109   # Input node  (from wire to input/logic node)
 
-# Unused
 pO = ord('O')   # 79
 po = ord('o')   # 111
 pL = ord('L')   # 76
@@ -82,7 +81,7 @@ _pal = [
     (pO, (255,128,0)),
     (po, (128,64,0)),
     (pL, (128,255,0)),
-    (pl, (0,128,64)),
+    (pl, (64,128,0)),
     (pT, (0,255,128)),
     (pt, (0,128,64)),
     (pS, (0,128,255)),
