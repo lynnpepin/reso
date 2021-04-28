@@ -100,9 +100,9 @@ Here's the full palette of colors that we consider "reserved". Other colors are 
 
 ## Examples
 
-Here's one outdated example!
+The Reso logo is actually a complete circuit in-and-of itself! Here is a small gif that explains what's going on, animated at 1/4th the speed (that is, one update every 2000ms):
 
-![This is Reso gif](./examples/this_is_reso.gif)
+![This is Reso gif](./examples/reso_logo_explained.gif)
 
 ## Things to be done:
 
@@ -111,6 +111,9 @@ Despite all the tests and documentation, Reso is a proof-of-concept and there's 
 Here are some neat ideas:
 
 **Flag to map to nearby colors:** I've been having a weird issue with some versions of The GIMP, where colors are saved or picked incorrectly. Reso requires precise colors (e.g. `#ff8000` is a valid color but `#ff8800` is not.) Perhaps a flag to consider only the ~4 or so most-significant-bits per pixel, or to map colors within a certain range to their nearest one in the palette, would be useful?
+
+
+**Export to GIF option:** Self explanatory! No more fiddling with GIMP or ffmpeg.
 
 **Transferrable compiled graphs:** Reso is really a graph computation model of a logical circuit, and images are a way to define that graph. I want to better decouple that model, and make this a repository a better reference implementation.
 
@@ -122,6 +125,7 @@ Specifically, we consider pixels to represent logical "resels" which can also be
 
 
 **Port to a faster language:** Porting this to a faster language would be great. I think Rust would be fun (both because I want to learn it, and because there's some "Web Assembly" thing that makes me think it's easier to put Rust in the web than, say, C or C++.) 
+
 
 
 ## See Also
