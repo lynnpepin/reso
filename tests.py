@@ -33,6 +33,8 @@ class ResoBoardInitTest(ut.TestCase):
         self.assertEqual(RB._resel_map[0,1], pG)
         self.assertEqual(RB._resel_map[2,4], pr)
 
+    # todo- new resel map with new colors
+
     def test_region_map(self):
         RB = ResoBoard("testing/test_02.png")
         self.assertEqual(len(RB._RM._regions), 12)
