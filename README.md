@@ -110,6 +110,8 @@ Despite all the tests and documentation, Reso is a proof-of-concept and there's 
 
 Here are some neat ideas:
 
+**Flag to map to nearby colors:** I've been having a weird issue with some versions of The GIMP, where colors are saved or picked incorrectly. Reso requires precise colors (e.g. `#ff8000` is a valid color but `#ff8800` is not.) Perhaps a flag to consider only the ~4 or so most-significant-bits per pixel, or to map colors within a certain range to their nearest one in the palette, would be useful?
+
 **Transferrable compiled graphs:** Reso is really a graph computation model of a logical circuit, and images are a way to define that graph. I want to better decouple that model, and make this a repository a better reference implementation.
 
 Specifically, we consider pixels to represent logical "resels" which can also be represented textually, and regions of resels represent elements, which are represented internally as a graph implemented with Python dictionaries. But this graph isn't a standard, so a compiled graph can't be transferred between implementations.
