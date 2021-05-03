@@ -1,0 +1,57 @@
+### 1. Title
+
+Hello all!
+
+(20sec) My name is Lynn Pepin, and I'm a data-scientist and security researcher at the University of Connecticut. For fun, I like to do game-dev and digital-art related side projects. I'm super honored to be here at !!Con 2021 to show y'all a little side-project of mine!
+
+(35sec) The title of this talk is "Making a Pixel-y Circuit Design Language, and then designing circuits in it!" You're actually looking at a very simple circuit right now! These colored elements at the periphery are just passing True / False values along in a ring.
+
+(20sec) I won't actually create this language during the talk -- that part is already done -- but I will show you how the language works and what kind of circuits can be made using it!
+
+(55sec so far)
+
+
+### 2. Logo ...
+
+(30sec) This language is called Reso, and here's the logo! Like the intro slide, the logo is also a digital circuit. This circuit is kind of complex, but it's composed entirely from only 10 different colors. You can make circuits like this using your favorite image editor! Say, MS Paint, or Photoshop. What are these 10 elements? Well...
+
+(1:15 total so far)
+
+
+
+#### 3. Logo + elements
+
+(15sec) With digital logic circuits, we need a few different kinds of elements. Here, elements are contiguous regions of colored pixels inside our limitted palette.
+
+(Diagram that updates as this goes, making a fully-fledged logic circuit.)
+
+
+
+(30 sec)
+    (1) Wires! Some kind of wire to carry logic around. Here, wires carry boolean 'True' or 'False' values, and brighten or darken to show those True or False values. Bright corresponds to True, and dark corresponds to False. On and off. To aid with wiring over a 2D grid, there are three different colors: Orange, sapphire, and lime. This makes six out of the ten elements we have. But we need more than just logic... We need to be able to implement...
+
+(30 sec)
+    (2) Logic! Reso provides elements for logical-AND gates and for logical-XOR gates. These are represented as two different colored elements: Dark and bright teal. One can also construct logical-NOT and logical-OR gates, we'll show how later. What are these elements? Well...
+
+(30 sec)    
+    (3) Input and output! When you draw logic gates, you need to be able to impose some directionality. You do this with Input / Output elements. The Input elements -- in dark purple --  gather all the values from wires connected to it, and push them to nearby logic elements, when push them forward to Output elements -- in bright purple. 
+
+(25 sec)
+    (4) And, as promised, here is how you can make logical NOT and logical OR. For a logical 'NOT', simply connect an 'on' wire to the input of a logical 'XOR'. For a logical 'OR', it's even easier: Connect an input node directly to an output node, skipping any of the logic nodes in the middle.
+    
+(3m total so far)
+
+    (1m) (Details) There are some things I'd like to point out here. (1...) Wires can cross over one-another diagonally, like this. Now, any color outside this palette of 10 would be considered "whitespace". It's not semantically significant, and so other colors, like white or black, can be used as comments.
+    
+    By the way, let's look a bit closer at the Reso logos. We have elements 1x1 pixel wide. I'm using wayyyyy more pixels than you'd need here. Just for style.
+
+
+(4m total so far)
+
+
+#### 4. Game of Life
+
+Now, this project is not a cellular automata, but it was inspired -- in part -- by Conway's Game of Life. For those unfamiliar, Life is another simulator that takes place in a 2D grid. One can actually implement logic gates and digital logic in life as well, but it's not very convenient to do so.
+
+
+#### 5.
