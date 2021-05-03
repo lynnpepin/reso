@@ -2,6 +2,7 @@ from resoboard import ResoBoard
 from PIL import Image
 import argparse
 from math import log, ceil
+from time import time
 import numpy as np
 
 
@@ -38,12 +39,15 @@ def main(
         print("  and then saving to ",save_prefix,'x'*num_digits_in_fname,".png",sep='')
     
     # Instantiate our ResoBoard
+    compile_start = time()
     RB = ResoBoard(load_filename)
+    compile_end = time()
     
     if V:
-        print("... Compiled! Iterating now.")
+        print(f"... Compiled in {compile_end - compile_start:.2f} seconds! Iterating now.")
     
     # Simulation!
+    iter_start = time()
     for ii in range(iterations):
         if save_each_iteration:
             save_loc = save_prefix + str(ii).zfill(num_digits_in_fname) + ".png"
@@ -54,9 +58,11 @@ def main(
         update_image = save_each_iteration or ii == iterations - 1
         RB.iterate(update_resels = False, update_image = update_image )
     
+    iter_end = time()
     # Last iteration, always saved
     if V:
         print("Iteration: ", iterations)
+        print(f"Completed {iterations + 1} steps in {iter_end - iter_start} seconds!")
     save_loc = save_prefix + str(iterations).zfill(num_digits_in_fname) + ".png"
     Image.fromarray(np.swapaxes(RB.get_image(),0,1)).save(save_loc)
     
