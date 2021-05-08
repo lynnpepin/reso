@@ -74,7 +74,7 @@ if __name__ == '__main__':
                         type=str, nargs=1)
     parser.add_argument("--save", "-s", help="Prefix to save images to.",
                         type=str, nargs=1)
-    parser.add_argument("--iterate","-i",
+    parser.add_argument("--numiter","-n",
                         help="iterate the reso board n times. Defaults to 1.",
                         type=int, nargs=1)
     parser.add_argument("--outputlast","-o",

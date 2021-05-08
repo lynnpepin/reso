@@ -25,30 +25,30 @@ This implementation of Reso supports command line usage. Input is a single image
 
 ### Command line
 
-Here's an example: Load `~/helloworld.png`, *iterate* (`-i`) 12 times, and *save* (`-s`) the results to `~/hello_00.png`, `~/hello_01.png`, ... `~/hello_04.png`, printing information *verbosely* (`-v`) along the way:
+Here's an example: Load `~/helloworld.png`, *iterate* (`-n`) 12 times, and *save* (`-s`) the results to `~/hello_00.png`, `~/hello_01.png`, ... `~/hello_04.png`, printing information *verbosely* (`-v`) along the way:
 
 
 ```
-python3 reso.py ~/helloworld.png -i 12 -s hello_ -v
+python3 reso.py ~/helloworld.png -n 12 -s hello_ -v
 ```
 
 If you only wanted to save the end result, add the "-o" flag, as such:
 
 ```
-python3 reso.py ~/helloworld.png -i 12 -s hello_ -v -o
+python3 reso.py ~/helloworld.png -n 12 -s hello_ -v -o
 ```
 
 And here is the full command-line usage:
 
 ```
-usage: reso.py load_location [--iterate ITERATE] [--save SAVE] [--outputlast] [--verbose]    
+usage: reso.py load_location [--numiter NUMITER] [--save SAVE] [--outputlast] [--verbose]    
 
 positional arguments:
   load_location         Location to load image from
 
 other arguments:
   --save SAVE, -s SAVE  Prefix to save images to.
-  --iterate ITERATE, -i ITERATE
+  --numiter ITERATE, -n ITERATE
                         iterate the reso board n times. Defaults to 1.
   --outputlast, -o      Only save the final iteration of the board.
   --verbose, -v         Print extra information; useful for debugging.
