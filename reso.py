@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     load_filename   = args.load_location[0]
     save_prefix     = args.save[0]
-    iterations = 1 if args.iterate  is None else args.iterate[0]
+    iterations = 1 if args.numiter  is None else args.numiter[0]
     save_each_iteration = not args.outputlast
     V = args.verbose
     

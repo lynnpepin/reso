@@ -19,6 +19,12 @@ Because images are valid circuits, you can copy-and-paste smaller components to 
 
 This implementation is (1) slow (it's in Python!) and (2) not-interactive (you can't edit circuits live!) I hope you can have fun with this despite those limitations. :)
 
+## Installation
+
+TODO -- Packages and Python version here.
+
+Not how to Git Clone with depth. (This is because I included slides, etc.)
+
 ## Usage
 
 This implementation of Reso supports command line usage. Input is a single image, and outputs are iterations of the Reso simulation of the circuit described in the first image.
