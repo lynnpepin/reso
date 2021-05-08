@@ -62,7 +62,7 @@ def main(
     # Last iteration, always saved
     if V:
         print("Iteration: ", iterations)
-        print(f"Completed {iterations + 1} steps in {iter_end - iter_start} seconds!")
+        print(f"Completed {iterations + 1} steps in {iter_end - iter_start:.2f} seconds!")
     save_loc = save_prefix + str(iterations).zfill(num_digits_in_fname) + ".png"
     Image.fromarray(np.swapaxes(RB.get_image(),0,1)).save(save_loc)
     
