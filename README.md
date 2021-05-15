@@ -21,9 +21,9 @@ This implementation is (1) slow (it's in Python!) and (2) not-interactive (you c
 
 ## Installation
 
-TODO -- Packages and Python version here.
+TODO -- I should list the packages and Python version here!
 
-Not how to Git Clone with depth. (This is because I included slides, etc.)
+It is recommended to run `git clone` with flag `--depth 1` since the examples, slides, etc. in this repository made it a bit heavy.
 
 ## Usage
 
@@ -108,7 +108,7 @@ Here's the full palette of colors that we consider "reserved". Other colors are 
 
 The Reso logo is actually a complete circuit in-and-of itself! Here is a small gif that explains what's going on, animated at 1/4th the speed (that is, one update every 2000ms):
 
-![This is Reso gif](./examples/reso_logo_explained.gif)
+![This is Reso gif](./logo/reso_logo_explained.gif)
 
 ## Things to be done:
 
