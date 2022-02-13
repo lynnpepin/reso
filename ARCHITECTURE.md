@@ -1,9 +1,9 @@
 Here's a brief description of the architecture of this program.
 
 
-## Functional components
+## Main components
 
-There are four functional components of Reso: The `regionmapper` tool which is used when compiling the graph, the `palette` code that defines some useful enumerations and mappings between pixels and 'resel' enums, the `resoboard` code that does the heavy lifting and logic of the simulator, and the `reso` code that wraps the logic for command line usage.
+There are four main components of Reso: The `regionmapper` tool which is used when compiling the graph, the `palette` code that defines some useful enumerations and mappings between pixels and 'resel' enums, the `resoboard` code that does the heavy lifting and logic of the simulator, and the `reso` code that wraps the logic for command line usage.
 
 ```
 .
@@ -57,12 +57,8 @@ And here are the non-code items we use :)
 ├── README.md
 │       The first thing you should be reading.
 │
-├── ARCHITECTURE.md
-│       This document! This describes roughly the project architecture.
-│
-└── doc
-        This is garbage! But soon it will contain a more formal specification.
-
+└── ARCHITECTURE.md
+        This document! This describes roughly the project architecture.
 ```
 
 ## Key concepts

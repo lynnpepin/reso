@@ -1,6 +1,8 @@
 # Reso
 ![Reso logo](./reso_logo.gif)
 
+[GitHub](https://github.com/lynnpepin/reso) - [GitLab](https://gitlab.com/lynnpepin/reso) - [Blogpost](https://lynndotpy.xyz/posts/reso_intro.html)
+
 Reso is a low-level circuit design language and simulator, inspired by things like Redstone, Conway's Game of Life, and Wireworld.
 
 **What is Reso?**
@@ -11,19 +13,19 @@ Reso is a low-level circuit design language and simulator, inspired by things li
  * Reso is *not* a cellular automata, despite similarities.
  * Reso is *not* useful or good yet, but I hope you can still have fun with it.
 
-An input program is a circuit described by a (bitmap) image. When a Reso program is ran through the Reso simulator, it outputs another valid Reso program! Things get interesting when you iterate this process.
-
-While the simulator acts like a pure function, for performance reasons, it maintains state between iterations.
+A Reso program is a circuit described by a bitmap image, and the output is another valid Reso program, updating the wire states (on or off). This is described as a pure function, but for performance, it maintains a compiled graph between iterations.
 
 Because images are valid circuits, you can copy-and-paste smaller components to build up more complex circuits using your favorite image editor!
 
 This implementation is (1) slow (it's in Python!) and (2) not-interactive (you can't edit circuits live!) I hope you can have fun with this despite those limitations. :)
 
+**Check out a pure Rust implementation from ashirviskas here: [https://github.com/ashirviskas/rust_reso/](https://github.com/ashirviskas/rust_reso/)**
+
 ## Installation
 
-TODO -- I should list the packages and Python version here!
+It is recommended to run `git clone` with flag `--depth 1` since the examples, slides, etc. in this repository makes it heavy.
 
-It is recommended to run `git clone` with flag `--depth 1` since the examples, slides, etc. in this repository made it a bit heavy.
+This requires **Python 3**, **Numpy** and **Pillow**. It's tested on Python 3.6, Numpy 1.19.2, and Pillow 8.0.1. 
 
 ## Usage
 
@@ -110,27 +112,22 @@ The Reso logo is actually a complete circuit in-and-of itself! Here is a small g
 
 ![This is Reso gif](./logo/reso_logo_explained.gif)
 
-## Things to be done:
+## Roadmap
 
-Despite all the tests and documentation, Reso is a proof-of-concept and there's a lot to be done before this could even be a little useful!
+The Reso Python reference 
 
-Here are some neat ideas:
-
-**Flag to map to nearby colors:** I've been having a weird issue with some versions of The GIMP, where colors are saved or picked incorrectly. Reso requires precise colors (e.g. `#ff8000` is a valid color but `#ff8800` is not.) Perhaps a flag to consider only the ~4 or so most-significant-bits per pixel, or to map colors within a certain range to their nearest one in the palette, would be useful?
-
-
-**Export to GIF option:** Self explanatory! No more fiddling with GIMP or ffmpeg.
-
-**Transferrable compiled graphs:** Reso is really a graph computation model of a logical circuit, and images are a way to define that graph. I want to better decouple that model, and make this a repository a better reference implementation.
-
-Specifically, we consider pixels to represent logical "resels" which can also be represented textually, and regions of resels represent elements, which are represented internally as a graph implemented with Python dictionaries. But this graph isn't a standard, so a compiled graph can't be transferred between implementations.
-
-**GUI and interactivity:** Some kind of GUI would be nifty too, rather than requiring expertise in some external graphical application. An interactive, Javascript webpage would make this a lot easier to mess around with, huh?
-
-**Speed:** This is also really slow. Might reimplement in Rust when I get around to learning it!
-
-
-**Port to a faster language:** Porting this to a faster language would be great. I think Rust would be fun (both because I want to learn it, and because there's some "Web Assembly" thing that makes me think it's easier to put Rust in the web than, say, C or C++.) 
+ - [ ] **Restructure:** Restructure this and throw it on Pip so people can install it easily.
+    - [ ] Oh, and throw it on pip.
+ - [ ] **Examples:** The more example circuits and components, the better!
+ - [ ] **Community:** This blew up! Building a community outside of GitHub issues is hard work. At the minimum, I want to make a Matrix / Discord community for this. 
+ - [ ] **Reso spec:** We have an incomplete formal spec (with pretty pictures informal spec) sitting around somewhere. Going to try and get that up soon!
+ - [ ] Minor things:
+    - [ ] Add a flag to map nearby colors, throwing away a few bits of precision.
+    - [ ] Export-to-gif option.
+    - [ ] Native format for the compiled graph.
+ - [ ] Major things:
+    - [ ] Interactive GUI. Perhaps use this [Rust implementation](https://github.com/ashirviskas/rust_reso/) as a WebAssembly backend for a web interface?
+    - [ ] Make a GitHub organization for Reso, to combine specs and implementations under one banner.
 
 
 
@@ -138,6 +135,13 @@ Specifically, we consider pixels to represent logical "resels" which can also be
 
 Here are a list of similar projects that I am aware of. Please make an issue or PR if you have something else to share!
 
+ * ashirviskas/IWillPull made a **Rust implementation!** It's blazing fast, check it out: https://github.com/ashirviskas/rust_reso/
+ * I've been made aware of several interesting related projects:
+    * [Turing Paint](https://byronknoll.com/turing.html) and [Doodle Code](https://byronknoll.com/doodle.html), which have a similar idea of "doodle-able logic circuits".
+    * [Wired Logic](https://github.com/martinkirsche/wired-logic), similar to wire-world, simulating circuits in an image.
+    * [An in-browser videogame](https://github.com/martinkirsche/wired-logic) that has you build circuits and solve problems.
+        - On that note, [Zachtronics](https://www.zachtronics.com/) has many videogames that might scratch a similar itch.
+    * 
  * Several sandbox videogames which have turing-complete circuit languages that empower the player to automate their world:
     * Minecraft's *Redstone* was the primary inspiration for this.
     * Terraria (Minecraft's 2D analogue) has a similar logic-gate wiring mechanism.
