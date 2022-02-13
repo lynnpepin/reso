@@ -1,9 +1,11 @@
 # Reso
 ![Reso logo](./reso_logo.gif)
 
-[GitHub](https://github.com/lynnpepin/reso) - [GitLab](https://gitlab.com/lynnpepin/reso) - [Blogpost](https://lynndotpy.xyz/posts/reso_intro.html)
+[GitHub](https://github.com/lynnpepin/reso) - [GitLab](https://gitlab.com/lynnpepin/reso) - [Blogpost](https://lynndotpy.xyz/posts/reso_intro.html) 
 
 Reso is a low-level circuit design language and simulator, inspired by things like Redstone, Conway's Game of Life, and Wireworld.
+
+(Update: Check out [ashirviskas's Rust implementation](https://github.com/ashirviskas/rust_reso/)! It's way faster than this Python implementation.)
 
 **What is Reso?**
 
