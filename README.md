@@ -27,7 +27,7 @@ This implementation is (1) slow (it's in Python!) and (2) not-interactive (you c
 
 It is recommended to run `git clone` with flag `--depth 1` since the examples, slides, etc. in this repository makes it heavy.
 
-This requires **Python 3**, **Numpy** and **Pillow**. It's tested on Python 3.6, Numpy 1.19.2, and Pillow 8.0.1. 
+This requires **Python 3**, **Numpy** and **Pillow>=9.0.0**. It's tested on Python 3.7, Numpy 1.21.2, and Pillow 9.0.1. (Don't use Pillow < \9.0.0, it has serious security vulnerabilities.)
 
 ## Usage
 
