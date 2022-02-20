@@ -1,3 +1,20 @@
+Metadata-Version: 2.1
+Name: reso
+Version: 0.0.1
+Summary: A digital logic circuit simulator that operates over images.
+Home-page: https://gitlab.com/lynnpepin/reso
+Author: lynndotpy
+Author-email: lynn@lynndotpy.xyz
+License: UNKNOWN
+Project-URL: Bug Tracker, https://gitlab.com/lynnpepin/reso/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # Reso
 ![Reso logo](./docs/reso_logo.gif)
 
@@ -171,3 +188,5 @@ Here are a list of similar projects that I am aware of. Please make an issue or 
  * [Wireworld](https://en.wikipedia.org/wiki/Wireworld) -- Another cellular automata in which it is easy to implement logic circuits.
  * [Brian's Brain](https://en.wikipedia.org/wiki/Brian%27s_Brain) -- A cellular automaton similar to the previous.
  * [Bitmap Logic Simulator](https://realhet.wordpress.com/2015/09/02/bitmap-logic-simulator/) -- I'm not sure how this works, but check it out! It's a similar idea.
+
+
