@@ -2,12 +2,12 @@ from PIL import Image
 import unittest as ut
 import numpy as np
 
-from palette import pR, pY, pG, pC, pB, pM
-from palette import pr, py, pg, pc, pb, pm
-from palette import pO, pL, pT, pS, pP, pV
-from palette import po, pl, pt, ps, pp, pv
-from palette import get, resel_to_rgb, rgb_to_resel
-from resoboard import ResoBoard
+from reso.palette import pR, pY, pG, pC, pB, pM
+from reso.palette import pr, py, pg, pc, pb, pm
+from reso.palette import pO, pL, pT, pS, pP, pV
+from reso.palette import po, pl, pt, ps, pp, pv
+from reso.palette import get, resel_to_rgb, rgb_to_resel
+from reso.resoboard import ResoBoard
 
 class DefaultPaletteTests(ut.TestCase):
     def setUp(self):
