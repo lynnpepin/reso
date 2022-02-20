@@ -23,23 +23,22 @@ This implementation is (1) slow (it's in Python!) and (2) not-interactive (you c
 
 **Check out a pure Rust implementation from ashirviskas here: [https://github.com/ashirviskas/rust_reso/](https://github.com/ashirviskas/rust_reso/)**
 
+
 ## Installation
 
-
-This requires **Python 3**, **Numpy** and **Pillow>=9.0.0**. It's tested on Python 3.6, Numpy 1.21.2, and Pillow 9.0.1. (Don't use Pillow < \9.0.0, it has serious security vulnerabilities.)
+This requires **Python 3**, **Numpy** and **Pillow>=9.0.0**. It's tested on Python 3.6, Numpy 1.21.2, and Pillow 9.0.1. (Don't use Pillow < 9.0.0, it has serious security vulnerabilities.)
 
 **Install from PyPi:**
 
-TODO
+```
+    python -m pip install reso
+```
 
-**Install from Conda:**
-
-TODO
 
 **Install directly from repo:**
 
 ```
-python -m pip install git+https://gitlab.com/lynnpepin/reso
+    python -m pip install git+https://gitlab.com/lynnpepin/reso
 ```
 
 (This should work. I think.) 
@@ -47,18 +46,18 @@ python -m pip install git+https://gitlab.com/lynnpepin/reso
 **Build from source as:**
 
 ```
-git clone git@gitlab.com:lynnpepin/reso.git --depth 1
-python -m pip install --upgrade pip # upgrade pip
-python -m pip install --upgrade build # install build
-python -m pip install -r requirements.txt
+    git clone git@gitlab.com:lynnpepin/reso.git --depth 1
+    python -m pip install --upgrade pip # upgrade pip
+    python -m pip install --upgrade build # install build
+    python -m pip install -r requirements.txt
 
-cd reso
-python -m build
+    cd reso
+    python -m build
 
-# Optional: Run tests
-cd tests
-python tests_for_regionmapper.py
-python tests.py
+    # Optional: Run tests
+    cd tests
+    python tests_for_regionmapper.py
+    python tests.py
 ```
 
 **Run tests**
@@ -67,6 +66,7 @@ python tests.py
 ```
 
 It is recommended to run `git clone` with flag `--depth 1` since the examples, slides, etc. in this repository makes it heavy.
+
 
 ## Usage
 
@@ -147,6 +147,7 @@ Here's the full palette of colors that we consider "reserved". Other colors are 
 
 (Note: Don't sample directly from your web-browser! They don't always render colors reliably.)
 
+
 ## Examples
 
 The Reso logo is actually a complete circuit in-and-of itself! Here is a small gif that explains what's going on, animated at 1/4th the speed (that is, one update every 2000ms):
@@ -159,6 +160,7 @@ The Reso Python reference
 
  - [ ] **Restructure:** Restructure this and throw it on Pip so people can install it easily.
     - [ ] Oh, and throw it on pip.
+    - [ ] Oh also Conda
  - [ ] **Examples:** The more example circuits and components, the better!
  - [ ] **Community:** This blew up! Building a community outside of GitHub issues is hard work. At the minimum, I want to make a Matrix / Discord community for this. 
  - [ ] **Reso spec:** We have an incomplete formal spec (with pretty pictures informal spec) sitting around somewhere. Going to try and get that up soon!
