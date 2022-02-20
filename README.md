@@ -28,21 +28,42 @@ This implementation is (1) slow (it's in Python!) and (2) not-interactive (you c
 
 This requires **Python 3**, **Numpy** and **Pillow>=9.0.0**. It's tested on Python 3.6, Numpy 1.21.2, and Pillow 9.0.1. (Don't use Pillow < \9.0.0, it has serious security vulnerabilities.)
 
-**Install from PyPi as:**
+**Install from PyPi:**
 
 TODO
 
-**Install from Conda as:**
+**Install from Conda:**
 
 TODO
+
+**Install directly from repo:**
+
+```
+python -m pip install git+https://gitlab.com/lynnpepin/reso
+```
+
+(This should work. I think.) 
 
 **Build from source as:**
 
 ```
+git clone git@gitlab.com:lynnpepin/reso.git --depth 1
 python -m pip install --upgrade pip # upgrade pip
 python -m pip install --upgrade build # install build
 python -m pip install -r requirements.txt
-python3 -m build
+
+cd reso
+python -m build
+
+# Optional: Run tests
+cd tests
+python tests_for_regionmapper.py
+python tests.py
+```
+
+**Run tests**
+
+```
 ```
 
 It is recommended to run `git clone` with flag `--depth 1` since the examples, slides, etc. in this repository makes it heavy.
@@ -57,13 +78,13 @@ Here's an example: Load `~/helloworld.png`, *iterate* (`-n`) 12 times, and *save
 
 
 ```
-python3 reso.py ~/helloworld.png -n 12 -s hello_ -v
+python -m reso ~/helloworld.png -n 12 -s hello_ -v
 ```
 
 If you only wanted to save the end result, add the "-o" flag, as such:
 
 ```
-python3 reso.py ~/helloworld.png -n 12 -s hello_ -v -o
+python -m reso ~/helloworld.png -n 12 -s hello_ -v -o
 ```
 
 And here is the full command-line usage:
@@ -148,7 +169,6 @@ The Reso Python reference
  - [ ] Major things:
     - [ ] Interactive GUI. Perhaps use this [Rust implementation](https://github.com/ashirviskas/rust_reso/) as a WebAssembly backend for a web interface?
     - [ ] Make a GitHub organization for Reso, to combine specs and implementations under one banner.
-
 
 
 ## See Also
