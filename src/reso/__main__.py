@@ -1,10 +1,9 @@
-from resoboard import ResoBoard
-from PIL import Image
 import argparse
 from math import log, ceil
 from time import time
 import numpy as np
-
+from PIL import Image
+from .resoboard import ResoBoard
 
 def main(
     load_filename,

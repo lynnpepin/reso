@@ -2,7 +2,7 @@ from PIL import Image
 import unittest as ut
 import numpy as np
 
-from regionmapper import RegionMapper, ortho_map, diag_map
+from reso.regionmapper import RegionMapper, ortho_map, diag_map
 
 class RegionMapperTest_OrthoNbhd_NoWrap(ut.TestCase):
     def setUp(self):

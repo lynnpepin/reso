@@ -1,0 +1,13 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/reso/__init__.py
+src/reso/__main__.py
+src/reso/palette.py
+src/reso/regionmapper.py
+src/reso/resoboard.py
+src/reso.egg-info/PKG-INFO
+src/reso.egg-info/SOURCES.txt
+src/reso.egg-info/dependency_links.txt
+src/reso.egg-info/top_level.txt
