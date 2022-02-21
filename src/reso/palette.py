@@ -36,32 +36,33 @@ from palette import get, resel_to_rgb, rgb_to_resel
 # These letters correspond to RYGCBM OLTSPV
 # (Red, Yellow, Green, Cyan, Blue, Magenta; Orange, Lime, Teal, Sapphire, Purple, Violet)
 
-pR = ord('R')   # 82    # On red wire
-pr = ord('r')   # 114   # Off red wire
-pG = ord('G')   # 71    # Unused
-pg = ord('g')   # 103   # Unused
-pB = ord('B')   # 66    # On blue wire
-pb = ord('b')   # 98    # Off blue wire
-
-pY = ord('Y')   # 89    # Unused
-py = ord('y')   # 121   # Unused
-pC = ord('C')   # 67    # XOR node
-pc = ord('c')   # 99    # AND node
-pM = ord('M')   # 77    # Output node (from input/logic node to wire)
-pm = ord('m')   # 109   # Input node  (from wire to input/logic node)
-
-pO = ord('O')   # 79
-po = ord('o')   # 111
-pL = ord('L')   # 76
-pl = ord('l')   # 108
-pT = ord('T')   # 84
-pt = ord('t')   # 116
-pS = ord('S')   # 83
-ps = ord('s')   # 115
-pP = ord('P')   # 80
-pp = ord('p')   # 112
+pO = ord('O')   # 79    # On orange wire
+po = ord('o')   # 111   # Off orange wire
+pL = ord('L')   # 76    # On lime wire
+pl = ord('l')   # 108   # Off lime wire
+pT = ord('T')   # 84    # Xor node
+pt = ord('t')   # 116   # And node
+pS = ord('S')   # 83    # On sapphire wire
+ps = ord('s')   # 115   # Off sapphire wire
+pP = ord('P')   # 80    # Output node (from input/logic node to wire)
+pp = ord('p')   # 112   # Input node (from wire to input/logic node)
 pV = ord('V')   # 86
 pv = ord('v')   # 118
+
+pR = ord('R')   # 82
+pr = ord('r')   # 114
+pG = ord('G')   # 71
+pg = ord('g')   # 103
+pB = ord('B')   # 66
+pb = ord('b')   # 98
+
+pY = ord('Y')   # 89 
+py = ord('y')   # 121
+pC = ord('C')   # 67
+pc = ord('c')   # 99
+pM = ord('M')   # 77
+pm = ord('m')   # 109
+
 
 #_pal is just a helper; we loop over it to create our resel-rgb dicts.
 # This represents the 12 hues, 'Saturated' and 'Dark'
