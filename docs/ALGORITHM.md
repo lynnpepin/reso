@@ -1,4 +1,6 @@
-# Reso algorithm
+# Reso algorithm (WIP page)
+
+This page is a WIP for 0.0.x. This is a high-level overview of it all.
 
 This page visually describes the algorithm used to compile Reso circuits and calculate their output.
 

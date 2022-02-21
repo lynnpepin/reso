@@ -16,11 +16,12 @@ If you want to import all the enums from this namespace and want to avoid *,
 but you *also* don't want to write 'palette.pR' (because it's so long!)
 then here are some easy copy-pastes for you:
 
-from palette import pR, pY, pG, pC, pB, pM
-from palette import pO, pL, pT, pS, pP, pV
-from palette import pr, py, pg, pc, pb, pm
-from palette import po, pl, pt, ps, pp, pv
-from palette import get, resel_to_rgb, rgb_to_resel
+from reso.palette import get, resel_to_rgb, rgb_to_resel,
+    pR, pY, pG, pC, pB, pM, \
+    pr, py, pg, pc, pb, pm, \
+    pO, pL, pT, pS, pP, pV, \
+    po, pl, pt, ps, pp, pv
+# Note: It's safe to do `from reso.palette import *` if you prefer.
 
 '''
 

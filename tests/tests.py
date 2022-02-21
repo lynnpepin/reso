@@ -2,11 +2,12 @@ from PIL import Image
 import unittest as ut
 import numpy as np
 
-from reso.palette import pR, pY, pG, pC, pB, pM
-from reso.palette import pr, py, pg, pc, pb, pm
-from reso.palette import pO, pL, pT, pS, pP, pV
-from reso.palette import po, pl, pt, ps, pp, pv
-from reso.palette import get, resel_to_rgb, rgb_to_resel
+# Note: It's safe to do `from reso.palette import *` if you prefer.
+from reso.palette import get, resel_to_rgb, rgb_to_resel,
+    pR, pY, pG, pC, pB, pM, \
+    pr, py, pg, pc, pb, pm, \
+    pO, pL, pT, pS, pP, pV, \
+    po, pl, pt, ps, pp, pv
 from reso.resoboard import ResoBoard
 
 class DefaultPaletteTests(ut.TestCase):

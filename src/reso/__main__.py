@@ -30,12 +30,12 @@ def main(
     
     # See this ugly variable here?
     # This is why Python gave us fstrings.
-    # todo: Use fstring magic and see if things still print right.
+    # todo: Use fstring magic throughout and see if things still print right.
     num_digits_in_fname = ceil(log(iterations+.1,10))
     
     if V:
-        print("  Loading", load_filename,"and iterating",iterations,"time(s),")
-        print("  and then saving to ",save_prefix,'x'*num_digits_in_fname,".png",sep='')
+        print(f"Loading {load_filename} and iterating {iterations} time(s)...")
+        print(f"    and then saving to {save_prefix}x{*num_digits_in_fname}.png")
     
     # Instantiate our ResoBoard
     compile_start = time()
@@ -49,6 +49,7 @@ def main(
     iter_start = time()
     for ii in range(iterations):
         if save_each_iteration:
+            # todo: Saving should use async/await concurrency magic.
             save_loc = save_prefix + str(ii).zfill(num_digits_in_fname) + ".png"
             Image.fromarray(np.swapaxes(RB.get_image(),0,1)).save(save_loc)
         if V:
@@ -60,7 +61,7 @@ def main(
     iter_end = time()
     # Last iteration, always saved
     if V:
-        print("Iteration: ", iterations)
+        print(f"Iteration: {iterations}")
         print(f"Completed {iterations + 1} steps in {iter_end - iter_start:.2f} seconds!")
     save_loc = save_prefix + str(iterations).zfill(num_digits_in_fname) + ".png"
     Image.fromarray(np.swapaxes(RB.get_image(),0,1)).save(save_loc)

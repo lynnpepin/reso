@@ -1,4 +1,4 @@
-Here's a brief description of the architecture of this program.
+Here's a brief description of the architecture of this code.
 
 
 ## Main components

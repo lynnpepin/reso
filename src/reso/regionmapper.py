@@ -57,8 +57,8 @@ RegionMapper(image,
 
 
 # Package constants, useful for defining neighborhoods.
-# ortho_map defines an orthogonal neighborhood
-# diag_map  defines a diagonal neighborhood
+#   ortho_map defines an orthogonal neighborhood
+#   diag_map  defines a diagonal neighborhood
 ortho_map = ((1,0),  (0,-1), (-1,0), (0,1))
 diag_map  = ((1,-1), (-1,-1),(-1,1), (1,1))
 
@@ -120,8 +120,8 @@ def _class_to_map(nbhd_offsets, value, default=ortho_map):
         to regionmapper.ortho_map
     :type default: Any object
 
-    :returns: todo
-    :rtype:
+    :returns: nbhd_offsets[value] if it exists, or the default value
+    :rtype: Any object
     """
     # e.g. _class_to_map(contiguities, 3)
     # where contiguities = { 3 : ortho_map + diag_map, ... }
@@ -130,7 +130,8 @@ def _class_to_map(nbhd_offsets, value, default=ortho_map):
 
     # This was writen when I was a baby.
     # This can probably be replaced with collections.defaultdict... todo!
-
+    
+    # todo: Isn't this just a defaultdict? Why not just use this?
     if value in nbhd_offsets.keys():
         return nbhd_offsets[value]
     else:
@@ -191,8 +192,6 @@ def _get_adjacent_pixels(x, y, w, h, nbhd_map = ortho_map, wrap = False):
 
 class RegionMapper:
     """
-    TODO -- document this, the init function, and clean up the comments
-
     Given an image, the goal is to identify contiguous regions of the same color
     pixel, where 'contiguity' is defined per-color.
 
@@ -242,25 +241,25 @@ class RegionMapper:
                  sparse         = True,
                  wrap           = False):
 
-        # TODO: Split this off into other functions!
+        # todo: We can split this off into other functions!
         width, height = image.shape[:2]
 
         assert(len(image.shape) == 3 or len(image.shape) == 2), \
             "image should be np array shaped (width, height) or (width, height, number_of_channels_in_image)"
 
-        # Create self._image, holding a 2D numpy array of class ints
-        # I.e. Convert an rgb-image (w,h,3) to class-image (w,h)
-        # todo: this can be vectorized !!!
+        # 1. Create self._image, holding a 2D numpy array of class ints
+        #     I.e. Convert an rgb-image (w,h,3) to class-image (w,h)
+        #     todo: this can be vectorized !!!
         self._image = np.zeros((width, height))
         for ii in range(width):
             for jj in range(height):
                 self._image[ii, jj] = _value_to_class(class_dict, image[ii,jj])
 
-        # Mapping of pixel coordinates to region indices.
-        # If Sparse, self._region_at_pixel this is a dict mapping (x, y) tuples to int
-        # otherwise, self._region_at_pixel is an *array* mapping [x,y] to int
-        # Where the 'int' is a unique integer mapping to the region
-        # An ID of -1 means there is no region at this pixel
+        # 2. Mapping of pixel coordinates to region indices.
+        #    If Sparse, self._region_at_pixel this is a dict mapping (x, y) tuples to int
+        #    otherwise, self._region_at_pixel is an *array* mapping [x,y] to int
+        #        (Where the 'int' is a unique integer mapping to the region)
+        #    An ID of -1 means there is no region at this pixel
         self._regions = []
         if sparse:
             self._region_at_pixel = dict()
@@ -268,8 +267,9 @@ class RegionMapper:
             self._region_at_pixel = np.zeros((width, height)) - 1
 
         # _regions_with_class:
-        # E.g. _regions_with_class[2] = [1,3,4] # Regions 1, 3, and 4 are the ones with class 3
-        # Basically, we also want a mapping of all regions that have a certain class.
+        #   E.g. _regions_with_class[2] = [1,3,4]
+            # Regions 1, 3, and 4 are the ones with class 3
+        #   Basically, we also want a mapping of all regions that have a certain class.
         self._regions_with_class = dict()
 
         # The busy work!
