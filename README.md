@@ -1,4 +1,4 @@
-# ⚠️[Reso (Python) is deprecated! See the actively-maintained Rust port](https://github.com/resolang/reso).
+# ⚠️⚠️[Reso (Python) is deprecated! See the actively-maintained Rust port](https://github.com/resolang/reso).⚠️⚠️
 
 Reso is on crates.io at [crates.io/crates/reso](https://crates.io/crates/reso), GitHub at [github.com/resolang/reso](https://github.com/resolang/reso) and GitLab at [gitlab.com/resolang/reso/](https://gitlab.com/resolang/reso/). Reso can be installed using `cargo install reso`.
 
